@@ -15,16 +15,19 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 
 	clues := []models.Clue{}
 	result := env.DB.Find(&clues)
+
+	data := make(map[string]interface{})
 	if result.RowsAffected > 0 {
-		env.Data["clues"] = clues
+		data["clues"] = clues
 	}
+	data["title"] = "Analytics | Admin"
 
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/admin.html",
 		"../web/templates/flash.html",
-		"../web/views/admin/clues.html"))
+		"../web/views/admin/clues/index.html"))
 
-	if err := templates.ExecuteTemplate(w, "base", env.Data); err != nil {
+	if err := templates.ExecuteTemplate(w, "base", data); err != nil {
 		http.Error(w, err.Error(), 0)
 		log.Print("Template executing error: ", err)
 	}

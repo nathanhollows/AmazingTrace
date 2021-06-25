@@ -24,6 +24,9 @@ func Clue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	}
 	data := Data{}
 
+	var st = "👏👏👏 Congratulations! 👏👏👏"
+	fmt.Print(st)
+
 	// TODO: Make this variable.
 	end := time.Date(2021, time.February, 24, 12, 0, 0, 0, time.Local)
 	data.TimeLeft = math.Floor(end.Sub(time.Now()).Minutes())

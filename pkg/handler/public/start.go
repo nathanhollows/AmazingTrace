@@ -1,49 +1,51 @@
 package public
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
+	"github.com/nathanhollows/AmazingTrace/pkg/flash"
 	"github.com/nathanhollows/AmazingTrace/pkg/handler"
+	"github.com/nathanhollows/AmazingTrace/pkg/models"
 )
 
 // Start begins the game for the team. Prints out their first clue
 func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "text/html")
-
-	type Data struct {
-		Team string
-	}
+	data := make(map[string]interface{})
+	data["title"] = "Start | The Amazing Trace"
 
 	r.ParseForm()
 	teamCode := r.Form.Get("code")
+	fmt.Println(teamCode)
+	team := models.Team{}
 
-	env.Data["team"] = teamCode
+	result := env.DB.Where("code == ?", teamCode).Find(&team)
+	if result.RowsAffected != 1 {
+		flash.Set(w, r, flash.Message{Message: "That's not a valid code. Try again.", Style: "warning"})
+		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+		return nil
+	}
 
-	var page string
-	index, err := env.Manager.GetTeam(teamCode)
+	env.DB.Save(&team)
+	data["team"] = team
+
+	session, _ := env.Session.Get(r, "trace")
+	session.Values["code"] = team.Code
+	err := session.Save(r, w)
 	if err != nil {
-		page = "../web/views/index/error.html"
-	} else {
-		team := &env.Manager.Teams[index]
-		team.CheckIn()
-		session, _ := env.Session.Get(r, "trace")
-		session.Values["code"] = team.Code
-		err := session.Save(r, w)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return nil
-		}
-		page = "../web/views/start/index.html"
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return nil
 	}
 
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/index.html",
-		page,
-	))
+		"../web/templates/flash.html",
+		"../web/views/public/start/index.html"))
 
-	if err := templates.ExecuteTemplate(w, "base", env.Data); err != nil {
+	if err := templates.ExecuteTemplate(w, "base", data); err != nil {
 		http.Error(w, err.Error(), 0)
 		log.Print("Template executing error: ", err)
 	}

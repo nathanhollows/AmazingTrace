@@ -48,7 +48,12 @@ func init() {
 }
 
 func main() {
-	env.DB.AutoMigrate(&models.Area{}, &models.Clue{}, &models.User{}, &models.Team{})
+	env.DB.AutoMigrate(
+		&models.Area{},
+		&models.Clue{},
+		&models.User{},
+		&models.Team{},
+	)
 	routes()
 	fmt.Println(http.ListenAndServe(":8000", router))
 }
@@ -58,22 +63,18 @@ func routes() {
 	router.Handle("/", handler.Handler{Env: &env, H: public.Index})
 
 	router.Handle("/start", handler.Handler{Env: &env, H: public.Start})
-	router.Handle("/library", handler.Handler{Env: &env, H: public.Library})
-	router.Handle("/clues", handler.Handler{Env: &env, H: public.Clues})
-
-	router.Handle("/{[A-z0-9]{5}}", handler.Handler{Env: &env, H: public.Clue})
+	router.Handle("/clues", handler.Handler{Env: &env, H: public.FoundClues})
 
 	router.Handle("/login", handler.Handler{Env: &env, H: public.Login})
 	router.Handle("/register", handler.Handler{Env: &env, H: public.Register})
 
-	router.Handle("/admin", handler.Admin{Env: &env, H: admin.Admin})
+	router.Handle("/admin", handler.Admin{Env: &env, H: admin.Dashboard})
 	router.Handle("/admin/ff", handler.Admin{Env: &env, H: admin.FastForward})
 	router.Handle("/admin/hinder", handler.Admin{Env: &env, H: admin.Hinder})
-	router.Handle("/admin/codes", handler.Admin{Env: &env, H: admin.Codes})
+	router.Handle("/admin/teams", handler.Admin{Env: &env, H: admin.Teams})
+	router.Handle("/admin/teams/generate", handler.Admin{Env: &env, H: admin.GenerateTeams})
 	router.Handle("/admin/clues", handler.Admin{Env: &env, H: admin.Clues})
-	router.Handle("/admin/assets", handler.Admin{Env: &env, H: admin.Assets})
 	router.Handle("/admin/analytics", handler.Admin{Env: &env, H: admin.Analytics})
-	router.Handle("/admin/pages", handler.Admin{Env: &env, H: admin.Pages})
 
 	router.Handle("/404", handler.Handler{Env: &env, H: public.Error404})
 	router.NotFound(public.NotFound)

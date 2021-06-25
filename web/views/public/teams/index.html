@@ -1,0 +1,29 @@
+{{ define "body" }}
+<div class="form">
+    <hr class="my-5">
+    <h1 class="h3 mb-3 font-weight-normal">The Amazing Trace</h1>
+    <hr class="my-5">
+    <p class="mb-3">
+        How to play:
+    </p>
+    <ul>
+        <li>The game goes for one hour</li>
+        <li>You will have three clues for three locations at any given time</li>
+        <li>You can keep solving clues until time is up</li>
+        <li>You are 100% allowed to ask people for help</li>
+        <li>Scan the clue or go to the link on the poster</li>
+        <li>You can only scan posters you have the clue for</li>
+        <li>Who ever solves the most clues wins</li>
+    </ul>
+    <p>
+        Got it? Good.
+        <form action="/clues" method="POST">
+            <input type="hidden" name="code" value="{{.Team }}">
+            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3" id="submit" href="#">Let's go</button>
+        </form>
+    </p>
+    <p>
+        
+    </p>
+</div>
+{{ end }}

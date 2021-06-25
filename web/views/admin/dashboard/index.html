@@ -1,0 +1,55 @@
+{{ define "body" }}
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <hr class="mb-5">
+            <h1 class="h3 mb-3 font-weight-normal">Dashboard</h1>
+            <hr class="my-5">
+        </div>
+    </div>
+    <div class="row text-left">
+        {{ range .Teams }} {{ if not (eq .LastSeen.Year 1) }}
+        <div class="col-md-4 col-sm-6">
+            <div class="col">
+                <h3 class="h4 my-3 pt-5 font-weight-normal">{{ .Code }}</h3>
+                <p>
+                    {{ len .Solved }} / {{ len .Clues }}<br />
+                </p>
+                <p>
+                    Last Seen {{ .LastSeen.Format "03:04:05" }}
+                </p>
+                {{ $clues := .Clues}}
+                <p>
+                    Looking For:
+                    <ul>
+                        {{range $i := .Unlocked}} {{ $clue := index $clues $i }}
+                        <li>
+                            {{ $clue.Title }} {{ if $clue.Challenge }}<span class="badge badge-warning">Challenge</span>{{ end }}
+                        </li>
+                        {{end}}
+                    </ul>
+                </p>
+                <p>
+                    <strong class="mb-2">Solved:</strong><br />
+                    <ul>
+                        {{range $i := .Solved}} {{ $clue := index $clues $i }}
+                        <li>
+                            {{ $clue.Title }}
+                        </li>
+                        {{end}}
+                    </ul>
+                </p>
+                <form action="/admin/ff" method="POST" class="d-inline-block">
+                    <input type="hidden" name="code" value="{{.Code}}">
+                    <button type="submit" class="btn btn-sm btn-primary">Help</button>
+                </form>
+                <form action="/admin/hinder" method="POST" class="d-inline-block">
+                    <input type="hidden" name="code" value="{{.Code}}">
+                    <button type="submit" class="btn btn-sm btn-danger">Hinder</button>
+                </form>
+            </div>
+        </div>
+        {{ end }} {{ end }}
+    </div>
+</div>
+{{ end }}

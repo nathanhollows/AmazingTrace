@@ -1,3 +1,9 @@
+body {
+    font-size: 1em;
+    color: white;
+    background-color: #212121;
+}
+
 h1,
 h2,
 h3,
@@ -5,6 +11,12 @@ h4,
 h5,
 h6 {
     text-transform: uppercase;
+}
+
+hr {
+    opacity: unset;
+    color:#ffd54f;
+    height: 3px !important;
 }
 
 .form-signin .form-control:focus {
@@ -31,4 +43,29 @@ input#code {
 #submit:hover,
 #submit:focus {
     background-color: #0e0e0e;
+}
+
+.image {
+    width: 150%;
+    margin-left: -25%;
+    max-width: 100vw;
+}
+.image img {
+    width: 100%;
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: #fff0;
+    --bs-table-striped-color: #212529;
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+    --bs-table-active-color: #212529;
+    --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+    --bs-table-hover-color: #212529;
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #fff;
+    vertical-align: top;
+    border-color: #454b51;
 }

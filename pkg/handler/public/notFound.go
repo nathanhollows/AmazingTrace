@@ -13,7 +13,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/index.html",
-		"../web/views/errors/notfound.html"))
+		"../web/views/public/errors/notFound.html"))
 
 	if err := templates.ExecuteTemplate(w, "base", nil); err != nil {
 		http.Error(w, err.Error(), 0)
