@@ -23,28 +23,6 @@ hr {
     z-index: 2;
 }
 
-input#code {
-    background: transparent;
-    border: 0.2em solid #212121;
-    color: #212121;
-    border-radius: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.7em;
-    text-align: center;
-}
-
-#submit {
-    border-radius: 0;
-    color: white;
-    background-color: #212121;
-    border-color: #212121;
-}
-
-#submit:hover,
-#submit:focus {
-    background-color: #0e0e0e;
-}
-
 .image {
     width: 150%;
     margin-left: -25%;
@@ -68,4 +46,47 @@ input#code {
     color: #fff;
     vertical-align: top;
     border-color: #454b51;
+}
+
+#submit {
+    border-radius: 0;
+    color: #212121;
+    background-color: #ffd54f;
+    border: 0.2em solid #ffd54f;
+}
+
+input#code {
+    background: transparent;
+    border: 0.2em solid #ffd54f;
+    color: #ffd54f;
+    border-radius: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.7em;
+    text-align: center;
+    font-weight: bold;
+    padding: 1em;
+}
+
+#submit:hover, #submit:focus {
+    background-color: #ffc716;
+}
+
+li {
+    list-style: square;
+    line-height: 2;
+}
+
+.form-control {
+    background-color: transparent !important;
+    border: none;
+    border-bottom-color: currentcolor;
+    border-bottom-style: none;
+    border-bottom-width: medium;
+    border-bottom: 0.2em solid #0d6efd;
+    color: white;
+    border-radius: 0;
+}
+
+.form-control:focus {
+    color: white;
 }

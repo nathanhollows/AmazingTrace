@@ -1,7 +1,7 @@
 {{ define "body" }}
 <div class="container sm-w-50">
     <div class="row justify-content-center text-center">
-        <div class="col-sm-12 col-md-6 col-lg-5">
+        <div class="col-sm-8 col-md-6 col-lg-4">
             <hr class="my-5">
             <h1 class="h6 mb-3 font-weight-normal">--- Presents</h1>
             <h2 class="h3 mb-3 font-weight-normal">The Amazing Trace</h2>
@@ -9,13 +9,12 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <div class="col-sm-12 col-md-6 col-lg-5">
+        <div class="col-sm-8 col-md-6 col-lg-4">
             {{ template "flash" . }}
             <form class="form" method="POST" action="/start">
-                  <p class="mb-3">Enter your code to get started</p>
-                  <label for="code" class="sr-only">Team Code</label>
-                  <input type="text" id="code" name="code" class="form-control mb-4" required="" autofocus="" placeholder="code" maxlength="4">
-                  <button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+                  <label for="code" class="sr-only text-center w-100">Enter your team code to start</label>
+                  <input type="text" id="code" name="code" class="form-control my-4" required="" autofocus="" placeholder="code" maxlength="4">
+                  <button id="submit" class="btn btn-lg btn-primary btn-block w-100" type="submit">Submit</button>
                 </form>
         </div>
     </div>
