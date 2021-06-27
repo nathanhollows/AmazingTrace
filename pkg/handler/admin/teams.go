@@ -21,7 +21,7 @@ func Teams(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data["messages"] = flash.Get(w, r)
 
 	teams := []models.Team{}
-	env.DB.Model(&models.Team{}).Find(&teams)
+	env.DB.Where("not started").Model(&models.Team{}).Find(&teams)
 	data["teams"] = teams
 
 	templates := template.Must(template.ParseFiles(
@@ -50,7 +50,7 @@ func GenerateTeams(env *handler.Env, w http.ResponseWriter, r *http.Request) err
 	}
 
 	if count == 0 {
-		env.DB.Where("id > ?", "-1").Delete(&models.Team{})
+		env.DB.Unscoped().Where("started <> 1").Delete(&models.Team{})
 		http.Redirect(w, r, r.Header.Get("Referer"), 302)
 		return nil
 	}
@@ -63,7 +63,7 @@ func GenerateTeams(env *handler.Env, w http.ResponseWriter, r *http.Request) err
 				http.Redirect(w, r, r.Header.Get("Referer"), 302)
 				return nil
 			}
-			i--
+			i-- // Try again
 		}
 	}
 

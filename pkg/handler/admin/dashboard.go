@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/nathanhollows/AmazingTrace/pkg/handler"
+	"github.com/nathanhollows/AmazingTrace/pkg/models"
 )
 
 // Dashboard shows an overview of the game
@@ -14,6 +15,10 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 
 	data := make(map[string]interface{})
 	data["title"] = "Admin"
+
+	teams := []models.Team{}
+	env.DB.Where("started == 1").Find(&teams)
+	data["teams"] = teams
 
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/admin.html",

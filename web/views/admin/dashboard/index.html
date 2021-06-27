@@ -7,36 +7,54 @@
             <hr class="my-5">
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Teams Playing</h5>
+                  <h6 class="card-subtitle h2 mb-2">
+                      {{ len .teams }}
+                  </h6>
+                </div>
+              </div>
+        </div>
+        <div class="col">
+            <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Time left</h5>
+                  <h6 class="card-subtitle h2 mb-2">
+                      {{ len .teams }}
+                  </h6>
+                </div>
+              </div>
+        </div>
+        <div class="col">
+            <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Most Clues Solved</h5>
+                  <h6 class="card-subtitle h2 mb-2">
+                      {{ len .teams }}
+                  </h6>
+                </div>
+              </div>
+        </div>
+    </div>
     <div class="row text-left">
-        {{ range .Teams }} {{ if not (eq .LastSeen.Year 1) }}
-        <div class="col-md-4 col-sm-6">
+        {{ range .teams }}
+        <div class="col-md-3 col-sm-6">
             <div class="col">
                 <h3 class="h4 my-3 pt-5 font-weight-normal">{{ .Code }}</h3>
                 <p>
-                    {{ len .Solved }} / {{ len .Clues }}<br />
+                    Solved:<br />
                 </p>
                 <p>
-                    Last Seen {{ .LastSeen.Format "03:04:05" }}
+                    Last Seen {{ .UpdatedAt.Format "03:04" }}
                 </p>
-                {{ $clues := .Clues}}
                 <p>
                     Looking For:
                     <ul>
-                        {{range $i := .Unlocked}} {{ $clue := index $clues $i }}
                         <li>
-                            {{ $clue.Title }} {{ if $clue.Challenge }}<span class="badge badge-warning">Challenge</span>{{ end }}
                         </li>
-                        {{end}}
-                    </ul>
-                </p>
-                <p>
-                    <strong class="mb-2">Solved:</strong><br />
-                    <ul>
-                        {{range $i := .Solved}} {{ $clue := index $clues $i }}
-                        <li>
-                            {{ $clue.Title }}
-                        </li>
-                        {{end}}
                     </ul>
                 </p>
                 <form action="/admin/ff" method="POST" class="d-inline-block">
@@ -49,7 +67,7 @@
                 </form>
             </div>
         </div>
-        {{ end }} {{ end }}
+        {{ end }}
     </div>
 </div>
 {{ end }}

@@ -10,6 +10,7 @@ type Team struct {
 	gorm.Model
 	Code     string `gorm:"uniqueIndex:idx_code,sort:desc;not null"`
 	Assigned bool   `gorm:"default:false"`
+	Started  bool   `gorm:"default:false;not null"`
 }
 
 // BeforeCreate generates a random string for the team to identify by
