@@ -1,10 +1,10 @@
 package public
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/nathanhollows/AmazingTrace/pkg/flash"
 	"github.com/nathanhollows/AmazingTrace/pkg/handler"
@@ -18,8 +18,7 @@ func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data["title"] = "Start | The Amazing Trace"
 
 	r.ParseForm()
-	teamCode := r.Form.Get("code")
-	fmt.Println(teamCode)
+	teamCode := strings.ToUpper(r.Form.Get("code"))
 	team := models.Team{}
 
 	result := env.DB.Where("code == ?", teamCode).Find(&team)
@@ -29,6 +28,7 @@ func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
+	team.Started = true
 	env.DB.Save(&team)
 	data["team"] = team
 
