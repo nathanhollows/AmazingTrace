@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/nathanhollows/AmazingTrace/pkg/flash"
 	"github.com/nathanhollows/AmazingTrace/pkg/handler"
 	"github.com/nathanhollows/AmazingTrace/pkg/models"
 )
@@ -21,6 +22,7 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		data["clues"] = clues
 	}
 	data["title"] = "Analytics | Admin"
+	data["messages"] = flash.Get(w, r)
 
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/admin.html",
@@ -31,5 +33,56 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		http.Error(w, err.Error(), 0)
 		log.Print("Template executing error: ", err)
 	}
+	return nil
+}
+
+// CreateClue saves the posted clue
+func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	w.Header().Set("Content-Type", "text/html")
+
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	}
+
+	r.ParseForm()
+	clue := models.Clue{}
+	clue.Location = r.PostFormValue("location")
+	clue.Clue = r.PostFormValue("clue")
+
+	result := env.DB.Create(&clue)
+	if result.Error != nil {
+		flash.Set(w, r, flash.Message{Message: "Could not save clue", Style: "warning"})
+	} else {
+		flash.Set(w, r, flash.Message{Message: "New clue added", Style: "success"})
+	}
+
+	http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	return nil
+}
+
+// DeleteClue deletes the posted clue
+func DeleteClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	w.Header().Set("Content-Type", "text/html")
+
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	}
+
+	r.ParseForm()
+	clue := models.Clue{}
+	result := env.DB.Where("code = ?", r.PostFormValue("code")).Find(&clue)
+	if result.Error != nil {
+		flash.Set(w, r, flash.Message{Message: "Could not delete clue", Style: "warning"})
+		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	}
+
+	result = env.DB.Where("code = ?", r.PostFormValue("code")).Delete(&clue)
+	if result.Error != nil {
+		flash.Set(w, r, flash.Message{Message: "Could not delete clue", Style: "warning"})
+	} else {
+		flash.Set(w, r, flash.Message{Message: "Clue successfully deleted", Style: "success"})
+	}
+
+	http.Redirect(w, r, r.Header.Get("Referer"), 302)
 	return nil
 }

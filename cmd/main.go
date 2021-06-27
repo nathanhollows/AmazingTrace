@@ -74,6 +74,8 @@ func routes() {
 	router.Handle("/admin/teams", handler.Admin{Env: &env, H: admin.Teams})
 	router.Handle("/admin/teams/generate", handler.Admin{Env: &env, H: admin.GenerateTeams})
 	router.Handle("/admin/clues", handler.Admin{Env: &env, H: admin.Clues})
+	router.Handle("/admin/clues/create", handler.Admin{Env: &env, H: admin.CreateClue})
+	router.Handle("/admin/clues/delete", handler.Admin{Env: &env, H: admin.DeleteClue})
 	router.Handle("/admin/analytics", handler.Admin{Env: &env, H: admin.Analytics})
 
 	router.Handle("/404", handler.Handler{Env: &env, H: public.Error404})
