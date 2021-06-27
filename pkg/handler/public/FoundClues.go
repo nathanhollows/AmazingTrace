@@ -25,6 +25,11 @@ func FoundClues(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 
 	data["team"] = team
 
+	// Get the total number of clues
+	var count int64
+	env.DB.Where("1=1").Find(&models.Clue{}).Count(&count)
+	data["count"] = count
+
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/index.html",
 		"../web/templates/flash.html",
