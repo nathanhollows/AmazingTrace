@@ -53,6 +53,7 @@ func main() {
 		&models.Area{},
 		&models.Clue{},
 		&models.User{},
+		&models.ClueLog{},
 		&models.Team{},
 	)
 	routes()
