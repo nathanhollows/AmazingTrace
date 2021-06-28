@@ -30,6 +30,7 @@ func init() {
 	router.Use(middleware.Compress(5))
 
 	var store = sessions.NewCookieStore([]byte("trace"))
+	store.Options.SameSite = http.SameSiteStrictMode
 
 	// TODO: Make this variable
 	env.Manager.CreateTeams(50)
