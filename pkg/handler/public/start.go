@@ -23,12 +23,14 @@ func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 
 	result := env.DB.Where("code == ?", teamCode).Find(&team)
 	if result.RowsAffected != 1 {
-		flash.Set(w, r, flash.Message{Message: "That's not a valid code. Try again.", Style: "warning"})
+		session, _ := env.Session.Get(r, "trace")
+		session.AddFlash(flash.Message{Message: "That's not a valid code. Try again.", Style: "warning"})
+		session.Save(r, w)
 		http.Redirect(w, r, r.Header.Get("Referer"), 302)
 		return nil
 	}
 
-	team.Started = true
+	team.Start(&env.DB)
 	env.DB.Save(&team)
 	data["team"] = team
 
