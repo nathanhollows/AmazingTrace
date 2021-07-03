@@ -66,6 +66,8 @@ func routes() {
 
 	router.Handle("/start", handler.Handler{Env: &env, H: public.Start})
 	router.Handle("/clues", handler.Handler{Env: &env, H: public.FoundClues})
+	router.Handle("/rules", handler.Handler{Env: &env, H: public.Rules})
+	router.Handle("/{code:[A-z]{4}}", handler.Handler{Env: &env, H: public.Clue})
 
 	router.Handle("/login", handler.Handler{Env: &env, H: public.Login})
 	router.Handle("/register", handler.Handler{Env: &env, H: public.Register})
