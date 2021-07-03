@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/nathanhollows/AmazingTrace/pkg/flash"
 	"github.com/nathanhollows/AmazingTrace/pkg/handler"
@@ -14,21 +15,32 @@ import (
 func FoundClues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "text/html")
 
+	session, err := env.Session.Get(r, "trace")
+	if err != nil {
+		flash.Set(w, r, flash.Message{Message: "Something went wrong. You don't seem to be registered.", Style: "warning"})
+		http.Redirect(w, r, "/", 302)
+	}
+	teamCode := session.Values["code"]
+	if teamCode == nil {
+		session.AddFlash(flash.Message{Message: "You need to be logged in to play.", Style: "warning"})
+		session.Save(r, w)
+		http.Redirect(w, r, "/", 302)
+		return nil
+	}
+
 	data := make(map[string]interface{})
 	data["title"] = "Clues | The Amazing Trace"
-	data["messages"] = flash.Get(w, r)
 
-	r.ParseForm()
-	teamCode := r.PostForm.Get("code")
 	team := &models.Team{}
-	env.DB.Where("code = ?", teamCode).Find(&team)
-
+	env.DB.Where("code = ?", teamCode).Preload("ClueLog.Clue").Find(&team)
 	data["team"] = team
 
-	// Get the total number of clues
-	var count int64
-	env.DB.Where("1=1").Find(&models.Clue{}).Count(&count)
-	data["count"] = count
+	var solved int64
+	env.DB.Model(&models.ClueLog{}).
+		Where("team = ? AND found <> ?", team.Code, time.Time{}).Count(&solved)
+	data["solved"] = solved
+	data["messages"] = session.Flashes()
+	session.Save(r, w)
 
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/index.html",

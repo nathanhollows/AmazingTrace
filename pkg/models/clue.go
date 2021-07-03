@@ -23,3 +23,9 @@ func (c *Clue) BeforeCreate(tx *gorm.DB) (err error) {
 	c.Code = helpers.NewCode(4)
 	return
 }
+
+// BeforeDelete will make sure every ClueLog has been soft deleted too
+func (c *Clue) BeforeDelete(tx *gorm.DB) (err error) {
+	result := tx.Where("clue_code = ?", c.Code).Delete(&ClueLog{})
+	return result.Error
+}
