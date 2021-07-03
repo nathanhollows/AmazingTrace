@@ -15,3 +15,4 @@
 # vendor/
 cmd/cmd
 cmd/trace.db
+cmd/main
