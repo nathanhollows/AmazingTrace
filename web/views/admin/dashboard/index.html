@@ -53,8 +53,11 @@
                 <p>
                     Looking For:
                     <ul>
-                        <li>
-                        </li>
+                        {{ range .ClueLog}}                    
+                        {{ if .Active }}
+                                <li class="mt-2">{{ .Clue.Location }}</li>
+                        {{ end }}
+                        {{end}}
                     </ul>
                 </p>
                 <form action="/admin/ff" method="POST" class="d-inline-block">

@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/nathanhollows/AmazingTrace/pkg/flash"
 	"github.com/nathanhollows/AmazingTrace/pkg/handler"
 	"github.com/nathanhollows/AmazingTrace/pkg/models"
+	"gorm.io/gorm/clause"
 )
 
 // Dashboard shows an overview of the game
@@ -14,11 +16,13 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "text/html")
 
 	data := make(map[string]interface{})
-	data["title"] = "Admin"
+	data["title"] = "Dashboard | Admin"
 
 	teams := []models.Team{}
-	env.DB.Where("started == 1").Find(&teams)
+	env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Find(&teams)
 	data["teams"] = teams
+
+	data["messages"] = flash.Get(w, r)
 
 	templates := template.Must(template.ParseFiles(
 		"../web/templates/admin.html",
