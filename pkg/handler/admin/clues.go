@@ -21,7 +21,7 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	if result.RowsAffected > 0 {
 		data["clues"] = clues
 	}
-	data["title"] = "Analytics | Admin"
+	data["title"] = "Clues | Admin"
 	data["messages"] = flash.Get(w, r)
 
 	templates := template.Must(template.ParseFiles(
