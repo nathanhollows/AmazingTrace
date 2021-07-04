@@ -36,9 +36,11 @@ All teams wanted more time to play. There were 25 clues but the winning team onl
 
 The first time we ran the game was with our first year students. We essentially only tested the project in production (apart from my own testing). It would have got the leaders team on the same page and made the game run much smoother.
 
-**3. Dyanmically add teams**
+~~**3. Dyanmically add teams**~~
 
-The game currently generates 50 teams codes and only adds them to the admin panel as the teams log in. I was struggling with the Go language and this was the easiest way around it given the timeframe I had to complete it. As long as there are fewer than 50 teams it would work well.
+~~The game currently generates 50 teams codes and only adds them to the admin panel as the teams log in. I was struggling with the Go language and this was the easiest way around it given the timeframe I had to complete it. As long as there are fewer than 50 teams it would work well.~~
+
+Done!
 
 **4. Dynamically adjust end time**
 
