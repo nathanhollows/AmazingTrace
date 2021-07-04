@@ -16,3 +16,4 @@
 cmd/cmd
 cmd/trace.db
 cmd/main
+web/static/img/posters/*
