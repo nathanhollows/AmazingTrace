@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col">
             {{ template "flash" . }}
-            
+
             <h5 class="card-title">Add clue</h5>
             <form method="POST" action="/admin/clues/create" class="mb-5">
                 <div class="row g-3">
@@ -43,6 +43,7 @@
                         <td>{{ .Clue }}</td>
                         <td>
                             <form method="POST" action="/admin/clues/delete">
+                                <a href="/public/img/posters/{{.Code}}.png" class="btn btn-secondary btn-sm">Get Poster</a>
                                 <button class="btn btn-sm btn-danger" name="code" value="{{.Code}}">Delete</button>
                             </form>
                         </td>

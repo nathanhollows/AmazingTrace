@@ -7,6 +7,7 @@ require (
 	github.com/go-chi/chi v1.5.1
 	github.com/gorilla/sessions v1.2.1
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect
+	github.com/yeqown/go-qrcode v1.5.5 // indirect
 	gorm.io/driver/sqlite v1.1.4 // indirect
 	gorm.io/gorm v1.21.11 // indirect
 )

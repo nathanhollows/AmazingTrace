@@ -50,6 +50,9 @@ func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	clue.Clue = r.PostFormValue("clue")
 
 	result := env.DB.Create(&clue)
+
+	clue.GeneratePoster()
+
 	if result.Error != nil {
 		flash.Set(w, r, flash.Message{Message: "Could not save clue", Style: "warning"})
 	} else {
