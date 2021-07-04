@@ -19,6 +19,7 @@ type Team struct {
 	Assigned bool      `gorm:"default:false"`
 	Started  bool      `gorm:"default:false;not null"`
 	ClueLog  []ClueLog `gorm:"foreignKey:Team;references:Code"`
+	Found    int       `gorm:"default:0;not null"`
 }
 
 // BeforeCreate generates a random string for the team to identify by
@@ -119,20 +120,23 @@ func (t *Team) CheckClue(tx *gorm.DB, code string) (err error) {
 
 	// Check if the clue is valid, and solvable
 	for _, log := range t.ClueLog {
-		// If the clue doesn't match then skip this one
+		// If the clue doesn't match then skip it
 		if log.Clue.Code != clue.Code {
 			continue
 		}
-		// If the clue has already been found
+		// If the clue has already been found then return an error
 		if !log.Found.IsZero() {
 			return errors.New("You have already solved this clue")
 		}
-		// But if it hasn't
+		// If the clue has just been solved then update
 		if log.Active {
 			tx.Model(&ClueLog{}).
 				Where("clue_code = ? and team = ?", log.ClueCode, log.Team).
 				Updates(map[string]interface{}{"found": time.Now(), "active": false}).
 				Omit("Clue")
+			tx.Model(&Team{}).
+				Where("code = ?", t.Code).
+				Update("found", t.Found+1)
 			t.ActivateClues(tx, 3)
 			return nil
 		}

@@ -11,66 +11,76 @@
         <div class="col">
             <div class="card text-center">
                 <div class="card-body">
-                  <h5 class="card-title">Teams Playing</h5>
-                  <h6 class="card-subtitle h2 mb-2">
-                      {{ len .teams }}
-                  </h6>
+                    <h5 class="card-title">Teams Playing</h5>
+                    <h6 class="card-subtitle h2 mb-2">
+                        {{ len .teams }}
+                    </h6>
                 </div>
-              </div>
+            </div>
         </div>
         <div class="col">
             <div class="card text-center">
                 <div class="card-body">
-                  <h5 class="card-title">Time left</h5>
-                  <h6 class="card-subtitle h2 mb-2">
-                      {{ len .teams }}
-                  </h6>
+                    <h5 class="card-title">Time left</h5>
+                    <h6 class="card-subtitle h2 mb-2">
+                        {{ len .teams }}
+                    </h6>
                 </div>
-              </div>
+            </div>
         </div>
         <div class="col">
             <div class="card text-center">
                 <div class="card-body">
-                  <h5 class="card-title">Most Clues Solved</h5>
-                  <h6 class="card-subtitle h2 mb-2">
-                      {{ len .teams }}
-                  </h6>
+                    <h5 class="card-title">Most Clues Solved</h5>
+                    <h6 class="card-subtitle h2 mb-2">
+                        {{ len .teams }}
+                    </h6>
                 </div>
-              </div>
+            </div>
         </div>
     </div>
     <div class="row text-left">
-        {{ range .teams }}
-        <div class="col-md-3 col-sm-6">
-            <div class="col">
-                <h3 class="h4 my-3 pt-5 font-weight-normal">{{ .Code }}</h3>
-                <p>
-                    Solved:<br />
-                </p>
-                <p>
-                    Last Seen {{ .UpdatedAt.Format "03:04" }}
-                </p>
-                <p>
-                    Looking For:
-                    <ul>
-                        {{ range .ClueLog}}                    
-                        {{ if .Active }}
-                                <li class="mt-2">{{ .Clue.Location }}</li>
-                        {{ end }}
-                        {{end}}
-                    </ul>
-                </p>
-                <form action="/admin/ff" method="POST" class="d-inline-block">
-                    <input type="hidden" name="code" value="{{.Code}}">
-                    <button type="submit" class="btn btn-sm btn-primary">Help</button>
-                </form>
-                <form action="/admin/hinder" method="POST" class="d-inline-block">
-                    <input type="hidden" name="code" value="{{.Code}}">
-                    <button type="submit" class="btn btn-sm btn-danger">Hinder</button>
-                </form>
-            </div>
-        </div>
-        {{ end }}
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Team</th>
+                    <th scope="col">Last Seen</th>
+                    <th scope="col">Score</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $team := .teams }}
+                <tr>
+                    <th scope="row">{{ add $i 1 }}</th>
+                    <td>
+                        <strong>
+                            {{ $team.Code }}
+                        </strong>
+                    </td>
+                    <td>{{ $team.UpdatedAt.Format "3:04 pm" }}</td>
+                    <td class="w-50">
+                        <div class="progress mt-1" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ progress $team.Found (len $team.ClueLog) }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                <strong>{{ $team.Found }}</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form action="/admin/ff" method="POST" class="d-inline-block">
+                            <input type="hidden" name="code" value="{{$team.Code}}">
+                            <button type="submit" class="btn btn-sm btn-success">Help</button>
+                        </form>
+                        <form action="/admin/hinder" method="POST" class="d-inline-block">
+                            <input type="hidden" name="code" value="{{$team.Code}}">
+                            <button type="submit" class="btn btn-sm btn-warning">Hinder</button>
+                        </form>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
     </div>
 </div>
 {{ end }}

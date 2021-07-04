@@ -19,12 +19,30 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data["title"] = "Dashboard | Admin"
 
 	teams := []models.Team{}
-	env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Find(&teams)
+	env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at desc").Find(&teams)
 	data["teams"] = teams
 
 	data["messages"] = flash.Get(w, r)
 
-	templates := template.Must(template.ParseFiles(
+	fm := template.FuncMap{
+		"divide": func(a, b int) float32 {
+			if a == 0 || b == 0 {
+				return 0
+			}
+			return float32(a) / float32(b)
+		},
+		"progress": func(a, b int) float32 {
+			if a == 0 || b == 0 {
+				return 0
+			}
+			return float32(a) / float32(b) * 100
+		},
+		"add": func(a, b int) int {
+			return a + b
+		},
+	}
+
+	templates := template.Must(template.New("dashboard").Funcs(fm).ParseFiles(
 		"../web/templates/admin.html",
 		"../web/templates/flash.html",
 		"../web/views/admin/dashboard/index.html"))
