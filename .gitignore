@@ -16,4 +16,6 @@
 cmd/cmd
 cmd/trace.db
 cmd/main
+main
+trace.db
 web/static/img/posters/*
