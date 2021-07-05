@@ -1,8 +1,6 @@
 package public
 
 import (
-	"html/template"
-	"log"
 	"net/http"
 	"time"
 
@@ -13,11 +11,9 @@ import (
 
 // FoundClues shows a team all of the clues they have unlocked
 func FoundClues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Content-Type", "text/html")
-
 	session, err := env.Session.Get(r, "trace")
 	if err != nil {
-		flash.Set(w, r, flash.Message{Message: "Something went wrong. You don't seem to be registered.", Style: "warning"})
+		session.AddFlash(flash.Message{Message: "Something went wrong. You don't seem to be registered.", Style: "warning"})
 		http.Redirect(w, r, "/", 302)
 	}
 	teamCode := session.Values["code"]
@@ -29,7 +25,7 @@ func FoundClues(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	}
 
 	data := make(map[string]interface{})
-	data["title"] = "Clues | The Amazing Trace"
+	data["title"] = "Clues"
 
 	team := &models.Team{}
 	env.DB.Where("code = ?", teamCode).Preload("ClueLog.Clue").Find(&team)
@@ -39,18 +35,8 @@ func FoundClues(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	env.DB.Model(&models.ClueLog{}).
 		Where("team = ? AND found <> ?", team.Code, time.Time{}).Count(&solved)
 	data["solved"] = solved
-	data["messages"] = session.Flashes()
+
+	data["messages"] = flash.Get(session, w, r)
 	session.Save(r, w)
-
-	templates := template.Must(template.ParseFiles(
-		"web/templates/index.html",
-		"web/templates/flash.html",
-		"web/views/public/clues/index.html",
-	))
-
-	if err := templates.ExecuteTemplate(w, "base", data); err != nil {
-		http.Error(w, err.Error(), 0)
-		log.Print("Template executing error: ", err)
-	}
-	return nil
+	return render(w, data, "clues/index.html")
 }

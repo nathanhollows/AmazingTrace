@@ -34,20 +34,8 @@ func Set(w http.ResponseWriter, r *http.Request, message Message) {
 }
 
 // Get gets flash messages from the cookie storage.
-func Get(w http.ResponseWriter, r *http.Request) []Message {
-	session, _ := getCookieStore().Get(r, sessionName)
-	fm := session.Flashes("message")
-	// If we have some messages.
-	if len(fm) > 0 {
-		session.Save(r, w)
-		// Initiate a strings slice to return messages.
-		var flashes []Message
-		for _, fl := range fm {
-			// Add message to the slice.
-			flashes = append(flashes, fl.(Message))
-		}
-
-		return flashes
-	}
-	return nil
+func Get(session *sessions.Session, w http.ResponseWriter, r *http.Request) []interface{} {
+	messages := session.Flashes()
+	session.Save(r, w)
+	return messages
 }

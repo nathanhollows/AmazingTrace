@@ -1,8 +1,6 @@
 package admin
 
 import (
-	"html/template"
-	"log"
 	"net/http"
 
 	"github.com/nathanhollows/AmazingTrace/internal/flash"
@@ -12,8 +10,6 @@ import (
 
 // Clues lists all available clues
 func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Content-Type", "text/html")
-
 	clues := []models.Clue{}
 	result := env.DB.Find(&clues)
 
@@ -21,23 +17,16 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	if result.RowsAffected > 0 {
 		data["clues"] = clues
 	}
-	data["title"] = "Clues | Admin"
-	data["messages"] = flash.Get(w, r)
-
-	templates := template.Must(template.ParseFiles(
-		"web/templates/admin.html",
-		"web/templates/flash.html",
-		"web/views/admin/clues/index.html"))
-
-	if err := templates.ExecuteTemplate(w, "base", data); err != nil {
-		http.Error(w, err.Error(), 0)
-		log.Print("Template executing error: ", err)
-	}
-	return nil
+	data["title"] = "Clues"
+	session, _ := env.Session.Get(r, "trace")
+	data["messages"] = flash.Get(session, w, r)
+	return render(w, data, "clues/index.html")
 }
 
 // CreateClue saves the posted clue
 func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	session, _ := env.Session.Get(r, "trace")
+
 	w.Header().Set("Content-Type", "text/html")
 
 	if r.Method != http.MethodPost {
@@ -54,9 +43,11 @@ func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	clue.GeneratePoster()
 
 	if result.Error != nil {
-		flash.Set(w, r, flash.Message{Message: "Could not save clue", Style: "warning"})
+		session.AddFlash(flash.Message{Message: "Could not save clue", Style: "warning"})
+		session.Save(r, w)
 	} else {
-		flash.Set(w, r, flash.Message{Message: "New clue added", Style: "success"})
+		session.AddFlash(flash.Message{Message: "New clue added", Style: "success"})
+		session.Save(r, w)
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)
@@ -66,6 +57,7 @@ func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 // DeleteClue deletes the posted clue
 func DeleteClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "text/html")
+	session, _ := env.Session.Get(r, "trace")
 
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, r.Header.Get("Referer"), 302)
@@ -75,15 +67,18 @@ func DeleteClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	clue := models.Clue{}
 	result := env.DB.Where("code = ?", r.PostFormValue("code")).Find(&clue)
 	if result.Error != nil {
-		flash.Set(w, r, flash.Message{Message: "Could not delete clue", Style: "warning"})
+		session.AddFlash(flash.Message{Message: "Could not delete clue", Style: "warning"})
+		session.Save(r, w)
 		http.Redirect(w, r, r.Header.Get("Referer"), 302)
 	}
 
 	result = env.DB.Where("code = ?", r.PostFormValue("code")).Delete(&clue)
 	if result.Error != nil {
-		flash.Set(w, r, flash.Message{Message: "Could not delete clue", Style: "warning"})
+		session.AddFlash(flash.Message{Message: "Could not delete clue", Style: "warning"})
+		session.Save(r, w)
 	} else {
-		flash.Set(w, r, flash.Message{Message: "Clue successfully deleted", Style: "success"})
+		session.AddFlash(flash.Message{Message: "Clue successfully deleted", Style: "success"})
+		session.Save(r, w)
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)

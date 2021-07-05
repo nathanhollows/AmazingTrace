@@ -59,27 +59,27 @@ func main() {
 
 // Set up the routes needed for the game.
 func routes() {
-	router.Handle("/", handler.Handler{Env: &env, H: public.Index})
+	router.Handle("/", handler.HandlePublic{Env: &env, H: public.Index})
 
-	router.Handle("/start", handler.Handler{Env: &env, H: public.Start})
-	router.Handle("/clues", handler.Handler{Env: &env, H: public.FoundClues})
-	router.Handle("/rules", handler.Handler{Env: &env, H: public.Rules})
-	router.Handle("/{code:[A-z]{4}}", handler.Handler{Env: &env, H: public.Clue})
+	router.Handle("/start", handler.HandlePublic{Env: &env, H: public.Start})
+	router.Handle("/clues", handler.HandlePublic{Env: &env, H: public.FoundClues})
+	router.Handle("/rules", handler.HandlePublic{Env: &env, H: public.Rules})
+	router.Handle("/{code:[A-z]{4}}", handler.HandlePublic{Env: &env, H: public.Clue})
 
-	router.Handle("/login", handler.Handler{Env: &env, H: public.Login})
-	router.Handle("/register", handler.Handler{Env: &env, H: public.Register})
+	router.Handle("/login", handler.HandlePublic{Env: &env, H: public.Login})
+	router.Handle("/register", handler.HandlePublic{Env: &env, H: public.Register})
 
-	router.Handle("/admin", handler.Admin{Env: &env, H: admin.Dashboard})
-	router.Handle("/admin/ff", handler.Admin{Env: &env, H: admin.FastForward})
-	router.Handle("/admin/hinder", handler.Admin{Env: &env, H: admin.Hinder})
-	router.Handle("/admin/teams", handler.Admin{Env: &env, H: admin.Teams})
-	router.Handle("/admin/teams/generate", handler.Admin{Env: &env, H: admin.GenerateTeams})
-	router.Handle("/admin/clues", handler.Admin{Env: &env, H: admin.Clues})
-	router.Handle("/admin/clues/create", handler.Admin{Env: &env, H: admin.CreateClue})
-	router.Handle("/admin/clues/delete", handler.Admin{Env: &env, H: admin.DeleteClue})
-	router.Handle("/admin/analytics", handler.Admin{Env: &env, H: admin.Analytics})
+	router.Handle("/admin", handler.HandleAdmin{Env: &env, H: admin.Dashboard})
+	router.Handle("/admin/ff", handler.HandleAdmin{Env: &env, H: admin.FastForward})
+	router.Handle("/admin/hinder", handler.HandleAdmin{Env: &env, H: admin.Hinder})
+	router.Handle("/admin/teams", handler.HandleAdmin{Env: &env, H: admin.Teams})
+	router.Handle("/admin/teams/generate", handler.HandleAdmin{Env: &env, H: admin.GenerateTeams})
+	router.Handle("/admin/clues", handler.HandleAdmin{Env: &env, H: admin.Clues})
+	router.Handle("/admin/clues/create", handler.HandleAdmin{Env: &env, H: admin.CreateClue})
+	router.Handle("/admin/clues/delete", handler.HandleAdmin{Env: &env, H: admin.DeleteClue})
+	router.Handle("/admin/analytics", handler.HandleAdmin{Env: &env, H: admin.Analytics})
 
-	router.Handle("/404", handler.Handler{Env: &env, H: public.Error404})
+	router.Handle("/404", handler.HandlePublic{Env: &env, H: public.Error404})
 	router.NotFound(public.NotFound)
 
 	workDir, _ := os.Getwd()

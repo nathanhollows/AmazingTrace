@@ -41,7 +41,7 @@ func (c *Clue) BeforeDelete(tx *gorm.DB) (err error) {
 // GeneratePoster pre-emptively generates the poster for the new clue
 func (c *Clue) GeneratePoster() error {
 	// TODO: Add URL to bottom of poster
-	imgb, _ := os.Open("../assets/poster.png")
+	imgb, _ := os.Open("assets/poster.png")
 	img, _ := png.Decode(imgb)
 	defer imgb.Close()
 
@@ -56,12 +56,12 @@ func (c *Clue) GeneratePoster() error {
 		fmt.Printf("could not generate QRCode: %v", err)
 		return err
 	}
-	if err := qrc.Save("../assets/" + c.Code + ".png"); err != nil {
+	if err := qrc.Save("assets/" + c.Code + ".png"); err != nil {
 		fmt.Printf("could not save image: %v", err)
 		return err
 	}
 
-	wmb, _ := os.Open("../assets/" + c.Code + ".png")
+	wmb, _ := os.Open("assets/" + c.Code + ".png")
 	watermark, _ := png.Decode(wmb)
 	defer wmb.Close()
 
@@ -75,7 +75,7 @@ func (c *Clue) GeneratePoster() error {
 	png.Encode(imgw, m)
 	defer imgw.Close()
 
-	os.Remove("../assets/" + c.Code + ".png")
+	os.Remove("assets/" + c.Code + ".png")
 
 	return nil
 }

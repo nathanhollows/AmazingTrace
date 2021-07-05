@@ -32,14 +32,14 @@ func (se StatusError) Status() int {
 	return se.Code
 }
 
-// Handler takes both a game manager and http function.
-type Handler struct {
+// HandlePublic takes both a game manager and http function.
+type HandlePublic struct {
 	Env *Env
 	H   func(e *Env, w http.ResponseWriter, r *http.Request) error
 }
 
-// Admin takes both a game manager and http function.
-type Admin struct {
+// HandleAdmin takes both a game manager and http function.
+type HandleAdmin struct {
 	Env *Env
 	H   func(e *Env, w http.ResponseWriter, r *http.Request) error
 }
@@ -52,7 +52,7 @@ type Env struct {
 	Data    map[string]interface{}
 }
 
-func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h HandlePublic) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := h.H(h.Env, w, r)
 	if err != nil {
 		switch e := err.(type) {
@@ -70,7 +70,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h Admin) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h HandleAdmin) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := h.H(h.Env, w, r)
 	if err != nil {
 		switch e := err.(type) {

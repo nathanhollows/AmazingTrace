@@ -1,8 +1,6 @@
 package public
 
 import (
-	"html/template"
-	"log"
 	"net/http"
 
 	"github.com/nathanhollows/AmazingTrace/internal/flash"
@@ -11,35 +9,20 @@ import (
 
 // Login handles user logins
 func Login(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Content-Type", "text/html")
-	templates := template.Must(template.ParseFiles(
-		"web/templates/index.html",
-		"web/views/session/login.html"))
+	session, _ := env.Session.Get(r, "trace")
+	data := make(map[string]interface{})
+	data["title"] = "Login"
+	data["messages"] = flash.Get(session, w, r)
 
-	if err := templates.ExecuteTemplate(w, "base", nil); err != nil {
-		http.Error(w, err.Error(), 0)
-		log.Print("Template executing error: ", err)
-	}
-	return nil
+	return render(w, data, "session/login.html")
 }
 
 // Register handles user registrations
 func Register(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Content-Type", "text/html")
+	session, _ := env.Session.Get(r, "trace")
+	data := make(map[string]interface{})
+	data["title"] = "Register"
+	data["messages"] = flash.Get(session, w, r)
 
-	switch r.Method {
-	case http.MethodPost:
-	}
-
-	env.Data["messages"] = flash.Get(w, r)
-
-	templates := template.Must(template.ParseFiles(
-		"web/templates/index.html",
-		"web/views/session/register.html"))
-
-	if err := templates.ExecuteTemplate(w, "base", env.Data); err != nil {
-		http.Error(w, err.Error(), 0)
-		log.Print("Template executing error: ", err)
-	}
-	return nil
+	return render(w, data, "session/register.html")
 }

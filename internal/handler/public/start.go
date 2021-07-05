@@ -1,8 +1,6 @@
 package public
 
 import (
-	"html/template"
-	"log"
 	"net/http"
 	"strings"
 
@@ -13,9 +11,8 @@ import (
 
 // Start begins the game for the team. Prints out their first clue
 func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Content-Type", "text/html")
 	data := make(map[string]interface{})
-	data["title"] = "Start | The Amazing Trace"
+	data["title"] = "Start"
 
 	r.ParseForm()
 	teamCode := strings.ToUpper(r.Form.Get("code"))
@@ -39,17 +36,9 @@ func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	err := session.Save(r, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return nil
+		return err
 	}
 
-	templates := template.Must(template.ParseFiles(
-		"web/templates/index.html",
-		"web/templates/flash.html",
-		"web/views/public/start/index.html"))
-
-	if err := templates.ExecuteTemplate(w, "base", data); err != nil {
-		http.Error(w, err.Error(), 0)
-		log.Print("Template executing error: ", err)
-	}
-	return nil
+	data["messages"] = flash.Get(session, w, r)
+	return render(w, data, "start/index.html")
 }
