@@ -8,38 +8,21 @@
         </div>
     </div>
     <div class="row">
-        <div class="col">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Teams Playing</h5>
-                    <h6 class="card-subtitle h2 mb-2">
-                        {{ len .teams }}
-                    </h6>
-                </div>
-            </div>
+        {{ if not .game }}
+        <div class="alert alert-secondary">
+            There are no games scheduled to start. Do you want to <a href="/admin/game">schedule a game</a>?
         </div>
-        <div class="col">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Time left</h5>
-                    <h6 class="card-subtitle h2 mb-2">
-                        {{ len .teams }}
-                    </h6>
-                </div>
-            </div>
+        {{ end }}
+        {{ if eq .clue_count 0 }}
+        <div class="alert alert-secondary">
+            There are not clues yet. Do you want to <a href="/admin/clues">add clues</a>?
         </div>
-        <div class="col">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Most Clues Solved</h5>
-                    <h6 class="card-subtitle h2 mb-2">
-                        {{ len .teams }}
-                    </h6>
-                </div>
-            </div>
+        {{ end }}
+        {{ if eq .code_count 0 }}
+        <div class="alert alert-secondary">
+            There are no teams yet. Do you want to <a href="/admin/clues">generate team codes</a>?
         </div>
-    </div>
-    <div class="row text-left">
+        {{ else }}
         <table class="table mt-5">
             <thead>
                 <tr>
@@ -51,6 +34,11 @@
                 </tr>
             </thead>
             <tbody>
+                {{ if eq (len .teams) 0 }}
+                    <tr>
+                        <th colspan="5" style="text-align: center; padding: 2em;">Teams will appear here when they first check in.</th>
+                    </tr>
+                {{end }}
                 {{ range $i, $team := .teams }}
                 <tr>
                     <th scope="row">{{ add $i 1 }}</th>
@@ -81,6 +69,7 @@
                 {{ end }}
             </tbody>
         </table>
+        {{ end }}
     </div>
 </div>
 {{ end }}

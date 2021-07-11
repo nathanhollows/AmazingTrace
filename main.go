@@ -49,9 +49,10 @@ func main() {
 	env.DB.AutoMigrate(
 		&models.Area{},
 		&models.Clue{},
-		&models.User{},
 		&models.ClueLog{},
+		&models.Game{},
 		&models.Team{},
+		&models.User{},
 	)
 	routes()
 	fmt.Println(http.ListenAndServe(":8000", router))
@@ -75,6 +76,7 @@ func routes() {
 	router.Handle("/admin/teams", handler.HandleAdmin{Env: &env, H: admin.Teams})
 	router.Handle("/admin/teams/generate", handler.HandleAdmin{Env: &env, H: admin.GenerateTeams})
 	router.Handle("/admin/clues", handler.HandleAdmin{Env: &env, H: admin.Clues})
+	router.Handle("/admin/game", handler.HandleAdmin{Env: &env, H: admin.Game})
 	router.Handle("/admin/clues/create", handler.HandleAdmin{Env: &env, H: admin.CreateClue})
 	router.Handle("/admin/clues/delete", handler.HandleAdmin{Env: &env, H: admin.DeleteClue})
 	router.Handle("/admin/analytics", handler.HandleAdmin{Env: &env, H: admin.Analytics})
