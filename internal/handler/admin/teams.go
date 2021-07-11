@@ -56,7 +56,7 @@ func GenerateTeams(env *handler.Env, w http.ResponseWriter, r *http.Request) err
 		}
 	}
 
-	http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	http.Redirect(w, r, r.Header.Get("Referer"), http.StatusSeeOther)
 	return nil
 
 }
