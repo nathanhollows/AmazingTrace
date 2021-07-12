@@ -11,6 +11,8 @@ The project was a huge hit with great turn out. I'd really like to run this agai
 
 ## Game play
 
+See the [wiki](https://github.com/nathanhollows/AmazingTrace/wiki) for roadmap and [How to play](https://github.com/nathanhollows/AmazingTrace/wiki/How-to-play).
+
 Users are given a team code, which are randomly generated when the game is launched. The team code is written on a card and given out. The card outlines very briefly how to play.
 
 <img src="https://user-images.githubusercontent.com/13064427/110064102-599c8980-7dd1-11eb-9f4f-e29f2d64e906.png" width="50%">
