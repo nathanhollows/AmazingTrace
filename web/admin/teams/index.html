@@ -16,11 +16,10 @@
             <button class="btn btn-primary" type="submit" name="count" value="50">+50 Teams</button>
             <button class="btn btn-danger" type="submit" name="count" value="0">Delete All</button>
         </form>
-        {{ range .teams }} 
+        {{ range .teams }}
         <div class="col-4 col-sm-3 col-md-2 col-lg-1">
             <h2 class="h5 py-4">
                 {{ .Code }}
-                {{ .Started }}
             </h2>
         </div>
         {{ end }}

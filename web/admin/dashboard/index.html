@@ -10,7 +10,7 @@
     <div class="row">
         {{ if not .game }}
         <div class="alert alert-secondary">
-            There are no games scheduled to start. Do you want to <a href="/admin/game">schedule a game</a>?
+            There are no games scheduled to start. Do you want to <a href="/admin/schedule">schedule a game</a>?
         </div>
         {{ end }}
         {{ if eq .clue_count 0 }}
@@ -20,7 +20,7 @@
         {{ end }}
         {{ if eq .code_count 0 }}
         <div class="alert alert-secondary">
-            There are no teams yet. Do you want to <a href="/admin/clues">generate team codes</a>?
+            There are no teams yet. Do you want to <a href="/admin/teams">generate team codes</a>?
         </div>
         {{ else }}
         <table class="table mt-5">
@@ -58,7 +58,7 @@
                     <td>
                         <form action="/admin/ff" method="POST" class="d-inline-block">
                             <input type="hidden" name="code" value="{{$team.Code}}">
-                            <button type="submit" class="btn btn-sm btn-success">Help</button>
+                            <button type="submit" class="btn btn-sm btn-secondary">Help</button>
                         </form>
                         <form action="/admin/hinder" method="POST" class="d-inline-block">
                             <input type="hidden" name="code" value="{{$team.Code}}">

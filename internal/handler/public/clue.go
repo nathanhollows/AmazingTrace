@@ -14,10 +14,8 @@ func Clue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	session, _ := env.Session.Get(r, "trace")
 
 	// Check if any team is currently logged in
-	teamCode := session.Values["code"]
-	team := &models.Team{}
-	result := env.DB.Where("Code = ?", teamCode).Preload("ClueLog.Clue").Find(&team)
-	if result.RowsAffected == 0 {
+	team, err := models.Team{}.Get(&env.DB, session.Values["code"])
+	if err != nil {
 		session.AddFlash(flash.Message{Message: "You need to be logged in to scan clues.", Style: "warning"})
 		session.Save(r, w)
 		http.Redirect(w, r, "/", 302)
@@ -25,7 +23,7 @@ func Clue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Check if the clue is one the team needed to find
-	err := team.CheckClue(&env.DB, chi.URLParam(r, "code"))
+	err = team.CheckClue(&env.DB, chi.URLParam(r, "code"))
 	if err != nil {
 		session.AddFlash(flash.Message{Message: err.Error(), Style: "warning"})
 		session.Save(r, w)

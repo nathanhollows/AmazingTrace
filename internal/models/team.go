@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"math/rand"
 	"sort"
@@ -20,6 +21,15 @@ type Team struct {
 	Started  bool      `gorm:"default:false;not null"`
 	ClueLog  []ClueLog `gorm:"foreignKey:Team;references:Code"`
 	Found    int       `gorm:"default:0;not null"`
+}
+
+// Get will fetch the team, and hydrate all associated records, given a team code.
+// Returns both a team and an error.
+func (t Team) Get(db *gorm.DB, code interface{}) (*Team, error) {
+	team := Team{}
+	code = strings.ToUpper(fmt.Sprintf("%v", code))
+	result := db.Where("Code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	return &team, result.Error
 }
 
 // BeforeCreate generates a random string for the team to identify by

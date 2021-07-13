@@ -7,8 +7,6 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-const sessionName = "flashMessages"
-
 func init() {
 	gob.Register(Message{})
 }
@@ -28,9 +26,7 @@ func getCookieStore() *sessions.CookieStore {
 
 // Set adds a new message into the cookie storage.
 func Set(w http.ResponseWriter, r *http.Request, message Message) {
-	session, _ := getCookieStore().Get(r, sessionName)
-	session.AddFlash(message, "message")
-	session.Save(r, w)
+
 }
 
 // Get gets flash messages from the cookie storage.
