@@ -45,7 +45,7 @@ func (t *Team) AfterFind(tx *gorm.DB) (err error) {
 			return t.ClueLog[i].Active
 		}
 		if t.ClueLog[i].Found.IsZero() {
-			return t.ClueLog[i].Clue.Location < t.ClueLog[j].Clue.Location
+			return t.ClueLog[i].Clue.UpdatedAt.String() < t.ClueLog[j].Clue.UpdatedAt.String()
 		}
 		return t.ClueLog[i].Found.Before(t.ClueLog[j].Found)
 	})
@@ -118,6 +118,27 @@ func (t *Team) ActivateClues(tx *gorm.DB, count int64) (err error) {
 	return nil
 }
 
+// Solve will solve a clue for a team
+func (t *Team) Solve(tx *gorm.DB, log ClueLog) error {
+	tx.Model(&ClueLog{}).
+		Where("clue_code = ? and team = ?", log.ClueCode, log.Team).
+		Updates(map[string]interface{}{"found": time.Now(), "active": false}).
+		Omit("Clue")
+	t.UpdateCount(tx)
+	t.ActivateClues(tx, 3)
+	return nil
+}
+
+// UpdateCount will update the found number of the team
+func (t *Team) UpdateCount(tx *gorm.DB) error {
+	var count int64
+	tx.Model(ClueLog{}).Where("team = ? AND found <> ?", t.Code, "0001-01-01 00:00:00+00:00").Count(&count)
+	tx.Model(&Team{}).
+		Where("code = ?", t.Code).
+		Update("found", count)
+	return nil
+}
+
 // CheckClue checks if the clue is valid, and solvable
 func (t *Team) CheckClue(tx *gorm.DB, code string) (err error) {
 	// Check if the clue is valid
@@ -140,17 +161,74 @@ func (t *Team) CheckClue(tx *gorm.DB, code string) (err error) {
 		}
 		// If the clue has just been solved then update
 		if log.Active {
-			tx.Model(&ClueLog{}).
-				Where("clue_code = ? and team = ?", log.ClueCode, log.Team).
-				Updates(map[string]interface{}{"found": time.Now(), "active": false}).
-				Omit("Clue")
-			tx.Model(&Team{}).
-				Where("code = ?", t.Code).
-				Update("found", t.Found+1)
-			t.ActivateClues(tx, 3)
+			t.Solve(tx, log)
+
 			return nil
 		}
 	}
 
 	return errors.New("Nice try. That's not a clue you can solve yet")
+}
+
+// FastForward automatically solves the next 3 clues
+func (t *Team) FastForward(tx *gorm.DB, limit int) error {
+	clues := []ClueLog{}
+	// Solve the oldest clue first
+	result := tx.Model(ClueLog{}).Where("team = ? AND active = 1", t.Code).Order("updated_at asc").Limit(limit).Find(&clues)
+	if result.Error != nil {
+		return errors.New("Could not find clues")
+	}
+	for _, clue := range clues {
+		t.Solve(tx, clue)
+	}
+	return nil
+}
+
+// Rewind will find the last solved clue and unsolve it
+func (t *Team) Rewind(tx *gorm.DB) error {
+	lastClue := ClueLog{}
+	result := tx.Model(ClueLog{}).Where("team = ? AND found <> ?", t.Code, time.Time{}).Order("found DESC").Limit(1).Find(&lastClue)
+	if result.Error != nil {
+		return errors.New("Could not find clue")
+	} else if result.RowsAffected == 0 {
+		return errors.New("There are no clues to rewind")
+	}
+
+	newestClue := ClueLog{}
+	result = tx.Model(ClueLog{}).Where("team = ? AND active = 1", t.Code).Order("updated_at DESC").Limit(1).Find(&newestClue)
+	if result.Error != nil {
+		return errors.New("Could not find clue")
+	}
+
+	tx.Model(&ClueLog{}).
+		Where("clue_code = ? and team = ?", newestClue.ClueCode, newestClue.Team).
+		Updates(map[string]interface{}{"active": false}).
+		Omit("Clue")
+	tx.Model(&ClueLog{}).
+		Where("clue_code = ? and team = ?", lastClue.ClueCode, lastClue.Team).
+		Updates(map[string]interface{}{"active": true, "found": time.Time{}}).
+		Omit("Clue")
+	t.ActivateClues(tx, 3)
+	t.UpdateCount(tx)
+
+	return nil
+
+}
+
+// Shuffle will reset the clues a team is looking for
+func (t *Team) Shuffle(tx *gorm.DB) error {
+	clues := []ClueLog{}
+	result := tx.Model(ClueLog{}).Where("team = ? AND active = 1", t.Code).Find(&clues)
+	if result.Error != nil {
+		return errors.New("Could not find clues")
+	}
+	for _, clue := range clues {
+		tx.Model(&ClueLog{}).
+			Where("clue_code = ? and team = ?", clue.ClueCode, clue.Team).
+			Updates(map[string]interface{}{"active": false}).
+			Omit("Clue")
+	}
+	t.ActivateClues(tx, 3)
+	t.UpdateCount(tx)
+	return nil
 }

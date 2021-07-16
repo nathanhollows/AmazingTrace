@@ -71,8 +71,9 @@ func routes() {
 	router.Handle("/register", handler.HandlePublic{Env: &env, H: public.Register})
 
 	router.Handle("/admin", handler.HandleAdmin{Env: &env, H: admin.Dashboard})
-	router.Handle("/admin/ff", handler.HandleAdmin{Env: &env, H: admin.FastForward})
-	router.Handle("/admin/hinder", handler.HandleAdmin{Env: &env, H: admin.Hinder})
+	router.Handle("/admin/fastforward", handler.HandleAdmin{Env: &env, H: admin.FastForward})
+	router.Handle("/admin/shuffle", handler.HandleAdmin{Env: &env, H: admin.Shuffle})
+	router.Handle("/admin/rewind", handler.HandleAdmin{Env: &env, H: admin.Rewind})
 	router.Handle("/admin/teams", handler.HandleAdmin{Env: &env, H: admin.Teams})
 	router.Handle("/admin/teams/generate", handler.HandleAdmin{Env: &env, H: admin.GenerateTeams})
 	router.Handle("/admin/clues", handler.HandleAdmin{Env: &env, H: admin.Clues})
