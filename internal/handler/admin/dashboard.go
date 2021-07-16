@@ -15,25 +15,25 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	data["title"] = "Dashboard"
 
-	var code_count int64
-	env.DB.Model(&models.Team{}).Count(&code_count)
-	data["code_count"] = int(code_count)
-	if code_count != 0 {
+	var codeCount int64
+	env.DB.Model(&models.Team{}).Count(&codeCount)
+	data["code_count"] = int(codeCount)
+	if codeCount != 0 {
 		teams := []models.Team{}
-		env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at desc").Find(&teams)
+		env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at asc").Find(&teams)
 		data["teams"] = teams
 	}
 
 	// Find the game with the next *end* time, in case we're in the middle of a game
 	game := models.Game{}
-	result := env.DB.Where("end_time > ?", time.Now()).Order("end_time ASC").First(&game)
-	if result.Error == nil {
+	result := env.DB.Where("end_time > ?", time.Now()).Order("end_time ASC").Limit(1).Find(&game)
+	if result.RowsAffected != 0 {
 		data["game"] = game
 	}
 
-	var clue_count int64
-	env.DB.Model(&models.Clue{}).Count(&clue_count)
-	data["clue_count"] = clue_count
+	var clueCount int64
+	env.DB.Model(&models.Clue{}).Count(&clueCount)
+	data["clue_count"] = clueCount
 
 	session, _ := env.Session.Get(r, "trace")
 	data["messages"] = flash.Get(session, w, r)
