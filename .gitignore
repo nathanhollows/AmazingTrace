@@ -17,5 +17,7 @@ cmd/cmd
 cmd/trace.db
 cmd/main
 main
+AmazingTrace
 trace.db
-web/static/img/posters/*
+assets/img/posters/*
+assets/fonts/*

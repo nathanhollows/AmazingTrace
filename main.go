@@ -10,12 +10,12 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/gorilla/sessions"
-	"github.com/nathanhollows/AmazingTrace/internal/filesystem"
-	"github.com/nathanhollows/AmazingTrace/internal/game"
-	"github.com/nathanhollows/AmazingTrace/internal/handler"
-	"github.com/nathanhollows/AmazingTrace/internal/handler/admin"
-	"github.com/nathanhollows/AmazingTrace/internal/handler/public"
-	"github.com/nathanhollows/AmazingTrace/internal/models"
+	"github.com/nathanhollows/AmazingTrace/filesystem"
+	"github.com/nathanhollows/AmazingTrace/game"
+	"github.com/nathanhollows/AmazingTrace/handler"
+	"github.com/nathanhollows/AmazingTrace/handler/admin"
+	"github.com/nathanhollows/AmazingTrace/handler/public"
+	"github.com/nathanhollows/AmazingTrace/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -51,6 +51,7 @@ func main() {
 		&models.Clue{},
 		&models.ClueLog{},
 		&models.Game{},
+		&models.Schedule{},
 		&models.Team{},
 		&models.User{},
 	)
@@ -63,29 +64,38 @@ func routes() {
 	router.Handle("/", handler.HandlePublic{Env: &env, H: public.Index})
 
 	router.Handle("/start", handler.HandlePublic{Env: &env, H: public.Start})
-	router.Handle("/clues", handler.HandlePublic{Env: &env, H: public.FoundClues})
+	router.Handle("/clues", handler.HandlePublic{Env: &env, H: public.Clues})
 	router.Handle("/rules", handler.HandlePublic{Env: &env, H: public.Rules})
-	router.Handle("/{code:[A-z]{4}}", handler.HandlePublic{Env: &env, H: public.Clue})
+	router.Handle("/time", handler.HandlePublic{Env: &env, H: public.Time})
+	router.Handle("/{code:[A-z]{4}}", handler.HandlePublic{Env: &env, H: public.Scan})
 
 	router.Handle("/login", handler.HandlePublic{Env: &env, H: public.Login})
 	router.Handle("/register", handler.HandlePublic{Env: &env, H: public.Register})
-
+	// Dashboard
 	router.Handle("/admin", handler.HandleAdmin{Env: &env, H: admin.Dashboard})
-	router.Handle("/admin/fastforward", handler.HandleAdmin{Env: &env, H: admin.FastForward})
-	router.Handle("/admin/shuffle", handler.HandleAdmin{Env: &env, H: admin.Shuffle})
-	router.Handle("/admin/rewind", handler.HandleAdmin{Env: &env, H: admin.Rewind})
+	router.Handle("/admin/dashboard", handler.HandleAdmin{Env: &env, H: admin.Dashboard})
+	router.Handle("/admin/dashboard/table", handler.HandleAdmin{Env: &env, H: admin.DashboardTable})
+	// Teams
 	router.Handle("/admin/teams", handler.HandleAdmin{Env: &env, H: admin.Teams})
+	router.Handle("/admin/teams/inspect/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.TeamInspect})
 	router.Handle("/admin/teams/generate", handler.HandleAdmin{Env: &env, H: admin.GenerateTeams})
+	router.Handle("/admin/teams/fastforward/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.FastForward})
+	router.Handle("/admin/teams/shuffle/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.Shuffle})
+	router.Handle("/admin/teams/rewind/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.Rewind})
+	// Clues
 	router.Handle("/admin/clues", handler.HandleAdmin{Env: &env, H: admin.Clues})
+	router.Handle("/admin/clues/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.ChangeClues})
 	router.Handle("/admin/clues/create", handler.HandleAdmin{Env: &env, H: admin.CreateClue})
-	router.Handle("/admin/clues/delete", handler.HandleAdmin{Env: &env, H: admin.DeleteClue})
-	router.Handle("/admin/analytics", handler.HandleAdmin{Env: &env, H: admin.Analytics})
+	// Schedule
 	router.Handle("/admin/schedule", handler.HandleAdmin{Env: &env, H: admin.Schedule})
+	router.Handle("/admin/schedule/create", handler.HandleAdmin{Env: &env, H: admin.CreateSchedule})
+	router.Handle("/admin/schedule/table", handler.HandleAdmin{Env: &env, H: admin.ScheduleTable})
+	router.Handle("/admin/schedule/{ID}", handler.HandleAdmin{Env: &env, H: admin.ChangeSchedule})
 
 	router.Handle("/404", handler.HandlePublic{Env: &env, H: public.Error404})
 	router.NotFound(public.NotFound)
 
 	workDir, _ := os.Getwd()
-	filesDir := filesystem.Myfs{Dir: http.Dir(filepath.Join(workDir, "web/static"))}
-	filesystem.FileServer(router, "/public", filesDir)
+	filesDir := filesystem.Myfs{Dir: http.Dir(filepath.Join(workDir, "assets"))}
+	filesystem.FileServer(router, "/static", filesDir)
 }

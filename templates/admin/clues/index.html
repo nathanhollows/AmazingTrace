@@ -1,0 +1,51 @@
+{{ define "body" }}
+<main class="container">
+    <h1>Clues</h1>
+    {{ template "flash" . }}
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Location</th>
+                <th scope="col">Clue</th>
+                <th scope="col">Poster</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML swap:1s">
+            {{ range .clues}}
+            <tr>
+                <th scope="row">{{ .Code }}</th>
+                <td>{{ .Location }}</td>
+                <td>{{ .Clue }}</td>
+                <td>                   
+                    <a href="/static/img/posters/{{.Code}}.png">Get Poster</a>
+                </td>
+                <td>
+                    <a name="code" value="{{.Code}}" hx-delete="/admin/clues/{{.Code}}">Delete</a>
+                </td>
+            </tr>
+            {{ end }}
+            <tr>
+                <td colspan="5">
+                    <form id="form" class="grid" hx-post="/admin/clues/create" hx-confirm="unset" hx-swap="outerHTML">
+                        <label for="location">
+                            Location
+                            <input type="text" id="location" name="location" placeholder="Location" required>
+                        </label>
+                        
+                        <label for="clue">
+                            Clue
+                            <input type="text" id="clue" name="clue" placeholder="Clue" required>
+                        </label>
+                        
+                        <button>Add</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+</main>
+{{ end }}

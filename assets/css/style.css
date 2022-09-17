@@ -1,0 +1,66 @@
+/** Variables **/
+
+:root:not([data-theme="light"]) {
+    --color: white;
+    --background-color: #212121;
+    --dark: #212121;
+    --primary: #ffd54f;
+    --border-radius: 0px;
+    --form-element-background-color: transparent;
+    --form-element-border-color: var(--primary);
+}
+
+/** Typography **/
+
+h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase;
+}
+
+hr {
+    height: 3px !important;
+    background: var(--primary);
+}
+
+a[role="button"], button, input[type="button"], input[type="reset"], input[type="submit"] {
+    color: var(--dark);
+    --color: var(--dark);
+}
+
+/** Layout **/
+
+.container {
+    max-width: 30ch;
+}
+
+.flex {
+    display: flex;
+    row-gap: var(--spacing);
+    column-gap: var(--spacing);
+}
+
+/** Header, Main, Footer **/
+
+body > footer, body > header, body > main {
+    padding: calc(var(--spacing) * 2) 0;
+}
+
+header, footer {
+    border-bottom: 3px solid var(--primary);
+    border-top: 3px solid var(--primary);
+    margin: var(--spacing) auto;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: unset;
+}
+
+/** Forms **/
+
+input#code {
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.5em;
+}

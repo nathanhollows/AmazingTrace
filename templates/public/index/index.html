@@ -1,0 +1,18 @@
+{{ define "body" }}
+<header class="container">
+    <strong>Locals Presents</strong>
+    <h1>The Amazing Trace</h1>
+</header>
+<main class="container">
+    {{ template "flash" . }}
+    <form class="form" method="POST" action="/start">
+        <label for="code">Enter your team code to start:</label>
+        <input type="text" id="code" name="code" required="" autofocus="" placeholder="code" maxlength="4">
+        <label for="team">Choose a team name:
+            <input id="team" name="team" type="text" placeholder="Team name" required="">
+        </label>
+        <br>
+        <button id="submit" type="submit">Begin</button>
+    </form>
+</main>
+{{ end }}

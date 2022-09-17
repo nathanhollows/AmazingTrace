@@ -1,0 +1,27 @@
+{{ define "fragment" }}
+<div id="modal-scans" class="grid">
+    <div>
+        <strong>Looking for:</strong>
+        <ul>
+            {{ range .team.ClueLog }}
+            {{ if .Active }}
+            <li>{{ .Clue.Location }}</li>
+            {{ end }}
+            {{ end }}
+        </ul>
+    </div>
+    
+    <div>
+        <strong>Found:</strong>
+        <ul>
+            {{ range .team.ClueLog }}
+                {{ if not .Active }}
+                    {{ if not .Found.IsZero }}
+                        <li>{{ .Clue.Location }}, {{ .Found.Format "3:04 pm"}}</li>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        </ul>
+    </div>
+</div>
+{{ end }}

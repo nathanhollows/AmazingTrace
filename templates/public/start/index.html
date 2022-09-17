@@ -1,0 +1,18 @@
+{{ define "body" }}
+<header class="container">
+    <strong>The Amazing Trace</strong>
+    <h1>How to play</h1>
+</header>
+<main class="container">
+    {{ template "flash" . }}
+    <ul>
+        <li>This is a race. You are competing against each other and the clock.</li>
+        <li>You will be given three clues. Each clue is for a different place. Find and scan the matching poster to solve the clue.</li>
+        <li>There are challenges. They will explain themselves. Good luck.</li>
+        <li>Solve the clues and scan back in before time runs out.</li>
+    </ul>
+</main>
+<footer class="container">
+    <a href="/clues" role="button" id="submit">Let's go</a>
+</footer>
+{{ end }}

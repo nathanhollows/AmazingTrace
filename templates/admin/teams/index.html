@@ -1,0 +1,21 @@
+{{ define "body" }}
+<main class="container">
+    <h1>Available team codes</h1>
+    
+    {{ template "flash" .}}
+    <form method="POST" action="/admin/teams/generate" class="flex">
+        <button type="submit" name="count" value="1">+1 Team</button>
+        <button type="submit" name="count" value="5">+5 Teams</button>
+        <button type="submit" name="count" value="10">+10 Teams</button>
+        <button type="submit" name="count" value="50">+50 Teams</button>
+        <button type="submit" name="count" value="0">Delete All</button>
+    </form>
+    <div id="codes" class="grid">
+        {{ range .teams }}
+        <div>
+            {{ .Code }}
+        </div>
+        {{ end }}
+    </div>
+</main>
+{{ end }}
