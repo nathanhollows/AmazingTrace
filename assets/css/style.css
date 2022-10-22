@@ -64,3 +64,9 @@ input#code {
     text-align: center;
     letter-spacing: 0.5em;
 }
+
+.alert.alert-warning {
+    font-weight: bold;
+    color: var(--primary);
+    margin: 1em 0 3em 0;
+}
