@@ -43,6 +43,9 @@ func init() {
 		DB:      *db,
 		Data:    make(map[string]interface{}),
 	}
+
+	// Clean up posters
+	go models.CleanUpPosters(db)
 }
 
 func main() {
@@ -86,6 +89,9 @@ func routes() {
 	router.Handle("/admin/clues", handler.HandleAdmin{Env: &env, H: admin.Clues})
 	router.Handle("/admin/clues/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.ChangeClues})
 	router.Handle("/admin/clues/create", handler.HandleAdmin{Env: &env, H: admin.CreateClue})
+	router.Handle("/admin/clues/new", handler.HandleAdmin{Env: &env, H: admin.NewClue})
+	router.Handle("/admin/clues/edit/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.EditClue})
+
 	// Schedule
 	router.Handle("/admin/schedule", handler.HandleAdmin{Env: &env, H: admin.Schedule})
 	router.Handle("/admin/schedule/create", handler.HandleAdmin{Env: &env, H: admin.CreateSchedule})

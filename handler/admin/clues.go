@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/nathanhollows/AmazingTrace/flash"
@@ -26,12 +27,73 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	return render(w, data, "clues/index.html")
 }
 
+// NewClue shows a form to create a new clue
+func NewClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	data["title"] = "New Clue"
+	session, _ := env.Session.Get(r, "trace")
+
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		clue := models.Clue{}
+		clue.Location = r.PostFormValue("name")
+		clue.Clue = r.PostFormValue("clues")
+		clue.Longitude = r.PostFormValue("longitude")
+		clue.Latitude = r.PostFormValue("latitude")
+		points, _ := strconv.Atoi(r.PostFormValue("points"))
+		clue.Points = points
+		result := env.DB.Create(&clue)
+		if result.Error != nil {
+			flash.Set(w, r, flash.Message{Message: "Could not save clue", Style: "warning"})
+		} else {
+			flash.Set(w, r, flash.Message{Message: "Clue successfully saved", Style: "success"})
+		}
+	}
+
+	data["messages"] = flash.Get(session, w, r)
+	return render(w, data, "clues/new.html")
+}
+
+// EditClue shows the edit form
+func EditClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	session, _ := env.Session.Get(r, "trace")
+	clueID := chi.URLParam(r, "code")
+	clue := models.Clue{}
+	result := env.DB.Where("code = ?", clueID).Find(&clue)
+	if result.Error != nil {
+		http.Redirect(w, r, "/admin/clues", http.StatusSeeOther)
+		return handler.StatusError{Code: http.StatusNotFound, Err: errors.New("this clue does not exist")}
+	}
+
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		clue.Location = r.PostFormValue("name")
+		clue.Clue = r.PostFormValue("clues")
+		clue.Longitude = r.PostFormValue("longitude")
+		clue.Latitude = r.PostFormValue("latitude")
+		points, _ := strconv.Atoi(r.PostFormValue("points"))
+		clue.Points = points
+		result := env.DB.Save(&clue)
+		if result.Error != nil {
+			flash.Set(w, r, flash.Message{Message: "Could not save clue", Style: "warning"})
+		} else {
+			flash.Set(w, r, flash.Message{Message: "Clue successfully saved", Style: "success"})
+		}
+	}
+
+	data["title"] = "Editing " + clue.Location
+	data["clue"] = clue
+	data["messages"] = flash.Get(session, w, r)
+	return render(w, data, "clues/edit.html")
+}
+
 // CreateClue saves the posted clue
 func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "text/html")
 
 	if r.Method != http.MethodPost {
-		return handler.StatusError{http.StatusMethodNotAllowed, errors.New("method not allowed")}
+		return handler.StatusError{Code: http.StatusMethodNotAllowed, Err: errors.New("method not allowed")}
 	}
 
 	r.ParseForm()
@@ -44,7 +106,7 @@ func CreateClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	clue.GeneratePoster()
 
 	if result.Error != nil {
-		return handler.StatusError{http.StatusInternalServerError, errors.New("could not save clue")}
+		return handler.StatusError{Code: http.StatusInternalServerError, Err: errors.New("could not save clue")}
 	}
 
 	fmt.Fprintf(w, `
@@ -120,17 +182,17 @@ func ChangeClues(env *handler.Env, w http.ResponseWriter, r *http.Request) error
 	clue := models.Clue{}
 	result := env.DB.Where("code = ?", code).Find(&clue)
 	if result.Error != nil {
-		return handler.StatusError{http.StatusNotFound, errors.New("this clue does not exist")}
+		return handler.StatusError{Code: http.StatusNotFound, Err: errors.New("this clue does not exist")}
 	}
 
 	if r.Method == http.MethodDelete {
 		result = env.DB.Delete(&clue)
 		if result.Error != nil {
-			return handler.StatusError{http.StatusInternalServerError, errors.New("this clue could not be deleted")}
+			return handler.StatusError{Code: http.StatusInternalServerError, Err: errors.New("this clue could not be deleted")}
 		} else {
 			return nil
 		}
 	}
 
-	return handler.StatusError{http.StatusMethodNotAllowed, errors.New("not yet implemented")}
+	return handler.StatusError{Code: http.StatusMethodNotAllowed, Err: errors.New("not yet implemented")}
 }
