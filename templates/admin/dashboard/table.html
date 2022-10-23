@@ -8,21 +8,13 @@
 <tr>
     <th scope="row">{{ add $i 1 }}</th>
     <td>
-        <strong>
-            {{ $team.Code }}
-        </strong>
+        <a data-target="modal" onClick="toggleModal(event)"
+            hx-get="/admin/teams/inspect/{{ $team.Code }}" hx-target="#modal" hx-swap="innerHTML" href="#">
+            {{ $team.Name }}
+        </a>
     </td>
-    <td>
-        {{ $team.Name }}
-    </td>
-    <td>{{ $team.UpdatedAt.Format "3:04 pm" }}</td>
     <td>
         <progress value="{{ $team.Found }}" max="{{ len $team.ClueLog }}"></progress>
-    </td>
-    <td>
-        <button class="contrast" data-target="modal" onClick="toggleModal(event)" hx-get="/admin/teams/inspect/{{ $team.Code }}" hx-target="#modal" hx-swap="innerHTML">
-            Inspect
-        </button>
     </td>
 </tr>
 {{ end }}
