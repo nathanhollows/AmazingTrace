@@ -28,7 +28,7 @@
             <textarea class="form-control" id="clues" name="clues" placeholder="Clues">{{ .clue.Clue }}</textarea>
             <small>Separate each clue with a new line</small>
 
-            <button>Submit</button>
+            <button>Save</button>
         </div>
 
     </form>
@@ -39,11 +39,15 @@
             Save the map location
         </label>
         <div id='map' style='width: 400px; height: 500px;'></div>
+
+        <a href="/static/img/posters/{{ .clue.Code}}.png">Get Poster</a>
     </aside>
     <script>
         coords = [170.5111643, -45.8650509]
+        zoom = 14
         {{ if .clue.Longitude }}
         coords = [{{ .clue.Longitude }}, {{ .clue.Latitude }}]
+        zoom = 18
         {{ end }}
         console.log(coords)
         mapboxgl.accessToken = 'pk.eyJ1IjoibmF0aGFuaG9sbG93cyIsImEiOiJjazIzMzRuNHAwMGVnM2lxaGEwbTNwNGQyIn0.vsjlOi_SpKog-zkBxKW0HQ';
@@ -52,7 +56,7 @@
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
             center: coords,
-            zoom: 14
+            zoom: zoom
         });
         
         var marker = new mapboxgl.Marker({
