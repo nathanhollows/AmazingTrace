@@ -8,6 +8,7 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gorilla/sessions v1.2.1
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect
+	github.com/xeonx/timeago v1.0.0-rc5 // indirect
 	github.com/yeqown/go-qrcode v1.5.5 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 	gorm.io/driver/sqlite v1.1.4 // indirect

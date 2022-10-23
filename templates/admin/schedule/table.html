@@ -8,6 +8,11 @@
             <td><a name="code" hx-delete="/admin/schedule/{{.ID}}" hx-target="closest tr" hx-confirm="Are you sure?">Delete</a></td>
         </tr>
     {{ end }}
+    {{ if .error }}
+        <tr>
+            <td colspan="5" style="text-align: center;">{{ .error }}</td>
+        </tr>
+    {{ end }}
     {{ if eq (len .schedule) 0 }}
     <tr>
         <td colspan="5">

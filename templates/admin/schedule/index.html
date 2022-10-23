@@ -16,7 +16,7 @@
         <tfoot>
             <tr>
                 <th colspan="5">
-                <form id="form" class="grid" hx-post="/admin/schedule/create" hx-target="#table-body" hx-swap="outerHTML" hx-swap="innerHTML">
+                <form id="form" class="grid" hx-post="/admin/schedule/create" hx-target="#table-body" hx-swap="innerHTML">
                     <label for="location">
                         Date
                         <input type="date" id="date" name="date" value="{{ date.Format "2006-01-02"}}" required>

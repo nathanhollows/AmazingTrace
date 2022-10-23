@@ -27,6 +27,9 @@ func Schedule(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 func CreateSchedule(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	w.Header().Set("Content-Type", "text/html")
+	schedules := []models.Schedule{}
+	env.DB.Find(&schedules)
+	data["schedule"] = schedules
 
 	if r.Method != http.MethodPost {
 		return handler.StatusError{Code: http.StatusMethodNotAllowed, Err: errors.New("method not allowed")}
@@ -36,16 +39,34 @@ func CreateSchedule(env *handler.Env, w http.ResponseWriter, r *http.Request) er
 	schedule := models.Schedule{}
 	schedule.SetTimes(r.PostFormValue("date"), r.PostFormValue("start"), r.PostFormValue("end"))
 
-	result := env.DB.Create(&schedule)
+	// Make sure the start time is before the end time
+	if schedule.Start.After(schedule.End) {
+		data["error"] = "The start time must be before the end time"
+		return renderFragment(w, data, "schedule/table.html")
+	} else if schedule.Start.Equal(schedule.End) {
+		data["error"] = "The start time must be before the end time"
+		return renderFragment(w, data, "schedule/table.html")
+	}
+
+	// Make sure the schedule doesn't overlap with any other schedules
+	existing := []models.Schedule{}
+	result := env.DB.Find(&existing)
+	// Check if there are any overlapping schedules
+	for _, s := range existing {
+		if schedule.Overlaps(s) {
+			data["error"] = "The schedule overlaps with another schedule"
+			return renderFragment(w, data, "schedule/table.html")
+		}
+	}
+
+	result = env.DB.Create(&schedule)
 
 	if result.Error != nil {
 		return handler.StatusError{Code: http.StatusInternalServerError, Err: errors.New("could not save schedule")}
 	}
 
-	schedules := []models.Schedule{}
 	env.DB.Find(&schedules)
 	data["schedule"] = schedules
-
 	return renderFragment(w, data, "schedule/table.html")
 }
 
