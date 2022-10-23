@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -30,6 +31,15 @@ var funcs = template.FuncMap{
 	},
 	"date": func() time.Time {
 		return time.Now()
+	},
+	// Given a string, return the file contents of the icon
+	"icon": func(name string) template.HTML {
+		icon, err := os.ReadFile("assets/img/icons/" + name + ".svg")
+		if err != nil {
+			return ""
+		}
+
+		return template.HTML(icon)
 	},
 }
 
