@@ -19,8 +19,7 @@ func Schedule(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	env.DB.Model(&schedule).Find(&schedule)
 	data["schedule"] = schedule
 
-	session, _ := env.Session.Get(r, "trace")
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "schedule/index.html")
 }
 

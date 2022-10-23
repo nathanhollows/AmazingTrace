@@ -40,6 +40,6 @@ func Start(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "start/index.html")
 }

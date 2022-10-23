@@ -16,8 +16,7 @@ import (
 func Teams(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	data["title"] = "Team Codes"
-	session, _ := env.Session.Get(r, "trace")
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 
 	teams := []models.Team{}
 	env.DB.Where("not started").Model(&models.Team{}).Find(&teams)

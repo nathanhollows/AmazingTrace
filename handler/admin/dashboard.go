@@ -35,8 +35,7 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	env.DB.Model(&models.Clue{}).Count(&clueCount)
 	data["clue_count"] = clueCount
 
-	session, _ := env.Session.Get(r, "trace")
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "dashboard/index.html")
 }
 

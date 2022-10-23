@@ -36,7 +36,7 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		Where("team = ? AND found <> ?", team.Code, time.Time{}).Count(&solved)
 	data["solved"] = solved
 
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	session.Save(r, w)
 	return render(w, data, "clues/index.html")
 }

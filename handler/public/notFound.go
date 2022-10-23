@@ -18,7 +18,6 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 func Error404(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	data["title"] = "Error 404"
-	session, _ := env.Session.Get(r, "trace")
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "errors/404notFound.html")
 }

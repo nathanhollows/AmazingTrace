@@ -13,7 +13,7 @@ import (
 func Index(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	session, _ := env.Session.Get(r, "trace")
 	data := make(map[string]interface{})
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 
 	// Check if team exists
 	teamCode := session.Values["code"]

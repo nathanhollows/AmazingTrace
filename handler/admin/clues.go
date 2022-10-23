@@ -22,8 +22,7 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		data["clues"] = clues
 	}
 	data["title"] = "Clues"
-	session, _ := env.Session.Get(r, "trace")
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "clues/index.html")
 }
 
@@ -31,7 +30,6 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 func NewClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	data["title"] = "New Clue"
-	session, _ := env.Session.Get(r, "trace")
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -50,14 +48,13 @@ func NewClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "clues/new.html")
 }
 
 // EditClue shows the edit form
 func EditClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
-	session, _ := env.Session.Get(r, "trace")
 	clueID := chi.URLParam(r, "code")
 	clue := models.Clue{}
 	result := env.DB.Where("code = ?", clueID).Find(&clue)
@@ -84,7 +81,7 @@ func EditClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 
 	data["title"] = "Editing " + clue.Location
 	data["clue"] = clue
-	data["messages"] = flash.Get(session, w, r)
+	data["messages"] = flash.Get(w, r)
 	return render(w, data, "clues/edit.html")
 }
 
