@@ -18,7 +18,7 @@ func Scan(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		session.AddFlash(flash.Message{Message: "You need to be logged in to scan clues.", Style: "warning"})
 		session.Save(r, w)
-		http.Redirect(w, r, "/", 302)
+		http.Redirect(w, r, "/", http.StatusFound)
 		return nil
 	}
 
@@ -27,12 +27,12 @@ func Scan(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		session.AddFlash(flash.Message{Message: err.Error(), Style: "warning"})
 		session.Save(r, w)
-		http.Redirect(w, r, "/clues", 302)
+		http.Redirect(w, r, "/clues", http.StatusFound)
 		return nil
 	}
 
 	session.AddFlash(flash.Message{Message: "👏👏👏 Congratulations! 👏👏👏", Style: "success text-center"})
 	session.Save(r, w)
-	http.Redirect(w, r, "/clues", 302)
+	http.Redirect(w, r, "/clues", http.StatusFound)
 	return nil
 }

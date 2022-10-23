@@ -147,7 +147,7 @@ func DeleteClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	session, _ := env.Session.Get(r, "trace")
 
 	if r.Method != http.MethodPost {
-		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 	}
 
 	r.ParseForm()
@@ -156,7 +156,7 @@ func DeleteClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 	if result.Error != nil {
 		session.AddFlash(flash.Message{Message: "Could not delete clue", Style: "warning"})
 		session.Save(r, w)
-		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 	}
 
 	result = env.DB.Where("code = ?", r.PostFormValue("code")).Delete(&clue)
@@ -168,7 +168,7 @@ func DeleteClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error 
 		session.Save(r, w)
 	}
 
-	http.Redirect(w, r, r.Header.Get("Referer"), 302)
+	http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 	return nil
 }
 

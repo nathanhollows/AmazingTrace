@@ -29,7 +29,7 @@ func CreateSchedule(env *handler.Env, w http.ResponseWriter, r *http.Request) er
 	w.Header().Set("Content-Type", "text/html")
 
 	if r.Method != http.MethodPost {
-		return handler.StatusError{http.StatusMethodNotAllowed, errors.New("method not allowed")}
+		return handler.StatusError{Code: http.StatusMethodNotAllowed, Err: errors.New("method not allowed")}
 	}
 
 	r.ParseForm()
@@ -39,7 +39,7 @@ func CreateSchedule(env *handler.Env, w http.ResponseWriter, r *http.Request) er
 	result := env.DB.Create(&schedule)
 
 	if result.Error != nil {
-		return handler.StatusError{http.StatusInternalServerError, errors.New("could not save schedule")}
+		return handler.StatusError{Code: http.StatusInternalServerError, Err: errors.New("could not save schedule")}
 	}
 
 	schedules := []models.Schedule{}
@@ -67,17 +67,17 @@ func ChangeSchedule(env *handler.Env, w http.ResponseWriter, r *http.Request) er
 	schedule := models.Schedule{}
 	result := env.DB.Where("id = ?", id).Find(&schedule)
 	if result.Error != nil {
-		return handler.StatusError{http.StatusNotFound, errors.New("this schedule does not exist")}
+		return handler.StatusError{Code: http.StatusNotFound, Err: errors.New("this schedule does not exist")}
 	}
 
 	if r.Method == http.MethodDelete {
 		result = env.DB.Delete(&schedule)
 		if result.Error != nil {
-			return handler.StatusError{http.StatusInternalServerError, errors.New("this schedule could not be deleted")}
+			return handler.StatusError{Code: http.StatusInternalServerError, Err: errors.New("this schedule could not be deleted")}
 		} else {
 			return nil
 		}
 	}
 
-	return handler.StatusError{http.StatusMethodNotAllowed, errors.New("not yet implemented")}
+	return handler.StatusError{Code: http.StatusMethodNotAllowed, Err: errors.New("not yet implemented")}
 }

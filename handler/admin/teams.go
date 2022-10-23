@@ -35,13 +35,13 @@ func GenerateTeams(env *handler.Env, w http.ResponseWriter, r *http.Request) err
 	count, err := strconv.Atoi(i)
 	if err != nil {
 		session.AddFlash(flash.Message{Message: "Could not generate teams", Style: "warning"})
-		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 		return nil
 	}
 
 	if count == 0 {
 		env.DB.Unscoped().Where("started <> 1").Delete(&models.Team{})
-		http.Redirect(w, r, r.Header.Get("Referer"), 302)
+		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 		return nil
 	}
 
@@ -50,7 +50,7 @@ func GenerateTeams(env *handler.Env, w http.ResponseWriter, r *http.Request) err
 		if result.Error != nil {
 			if !strings.Contains(result.Error.Error(), "UNIQUE constraint failed:") {
 				session.AddFlash(flash.Message{Message: "Something went wrong generating the teams", Style: "warning"})
-				http.Redirect(w, r, r.Header.Get("Referer"), 302)
+				http.Redirect(w, r, r.Header.Get("Referer"), http.StatusFound)
 				return nil
 			}
 			i-- // Try again

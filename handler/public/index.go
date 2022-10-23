@@ -19,7 +19,7 @@ func Index(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	teamCode := session.Values["code"]
 	result := env.DB.Where("Code = ?", teamCode).Find(&models.Team{})
 	if result.RowsAffected == 1 {
-		http.Redirect(w, r, "/clues", 302)
+		http.Redirect(w, r, "/clues", http.StatusFound)
 	}
 
 	return render(w, data, "index/index.html")
