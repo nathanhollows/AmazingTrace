@@ -24,7 +24,9 @@
             {{ range .clues}}
             <tr>
                 {{ if .Latitude }}
-                <td>Yes</td>
+                <td>{{ icon "map-pin" }}</td>
+                {{ else }}
+                <td><small>{{ icon "x" }}</small></td>
                 {{ end }}
                 <td>{{ .Points }}</td>
                 <td><strong><a href="/admin/clues/edit/{{ .Code }}">{{ .Location }}</a></strong></td>
