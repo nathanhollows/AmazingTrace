@@ -3,7 +3,7 @@
         {{ range index . "messages" }}
         <div class="alert alert-{{if .Style}}{{.Style}}{{else}}primary{{end}}" role="alert">
           {{ if .Title }}<strong>{{.Title}}</strong><br>{{end}}
-          {{ .Message }}
+          {{ html .Message }}
         </div>
         {{ end }}
   {{ end }}

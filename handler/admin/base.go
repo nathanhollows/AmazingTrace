@@ -41,6 +41,12 @@ var funcs = template.FuncMap{
 
 		return template.HTML(icon)
 	},
+	"js": func(s string) template.JS {
+		return template.JS(s)
+	},
+	"html": func(s string) template.HTML {
+		return template.HTML(s)
+	},
 }
 
 func parse(patterns ...string) *template.Template {

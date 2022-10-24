@@ -44,7 +44,8 @@ func NewClue(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		if result.Error != nil {
 			flash.Set(w, r, flash.Message{Message: "Could not save clue", Style: "warning"})
 		} else {
-			flash.Set(w, r, flash.Message{Message: "Clue successfully saved", Style: "success"})
+			message := fmt.Sprintf("Clue <a href=\"/admin/clues/edit/%v\">%v</a> for %v successfully saved", clue.Code, clue.Code, clue.Location)
+			flash.Set(w, r, flash.Message{Message: message, Style: "success"})
 		}
 	}
 
