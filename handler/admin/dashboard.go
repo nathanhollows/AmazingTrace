@@ -31,9 +31,10 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 		data["game"] = game
 	}
 
-	var clueCount int64
-	env.DB.Model(&models.Clue{}).Count(&clueCount)
-	data["clue_count"] = clueCount
+	var clues []models.Clue
+	env.DB.Find(&clues)
+	data["clues"] = clues
+	data["clue_count"] = len(clues)
 
 	data["messages"] = flash.Get(w, r)
 	return render(w, data, "dashboard/index.html")
