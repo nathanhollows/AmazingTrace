@@ -138,7 +138,7 @@ var (
 func addLabel(img *image.RGBA, x, y int, label string) {
 	flag.Parse()
 	col := color.RGBA{254, 214, 79, 255}
-	point := fixed.Point26_6{fixed.Int26_6(x * 64), fixed.Int26_6(y * 64)}
+	point := fixed.Point26_6{X: fixed.Int26_6(x * 64), Y: fixed.Int26_6(y * 64)}
 
 	// Read the font data.
 	fontBytes, err := ioutil.ReadFile(*fontfile)
