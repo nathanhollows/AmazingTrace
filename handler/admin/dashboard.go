@@ -12,41 +12,38 @@ import (
 
 // Dashboard shows an overview of the game
 func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	data := make(map[string]interface{})
-	data["title"] = "Dashboard"
+	env.Data["title"] = "Dashboard"
 
 	var codeCount int64
 	env.DB.Model(&models.Team{}).Count(&codeCount)
-	data["code_count"] = int(codeCount)
+	env.Data["code_count"] = int(codeCount)
 	if codeCount != 0 {
 		teams := []models.Team{}
 		env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at asc").Find(&teams)
-		data["teams"] = teams
+		env.Data["teams"] = teams
 	}
 
 	// Find the game with the next *end* time, in case we're in the middle of a game
 	game := models.Game{}
 	result := env.DB.Where("end_time > ?", time.Now()).Order("end_time ASC").Limit(1).Find(&game)
 	if result.RowsAffected != 0 {
-		data["game"] = game
+		env.Data["game"] = game
 	}
 
 	var clues []models.Clue
 	env.DB.Find(&clues)
-	data["clues"] = clues
-	data["clue_count"] = len(clues)
+	env.Data["clues"] = clues
+	env.Data["clue_count"] = len(clues)
 
-	data["messages"] = flash.Get(w, r)
-	return render(w, data, "dashboard/index.html")
+	env.Data["messages"] = flash.Get(w, r)
+	return render(w, env.Data, "dashboard/index.html")
 }
 
 // DashboardTable renders only the table part of the dashboard
 func DashboardTable(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
-	data := make(map[string]interface{})
-
 	teams := []models.Team{}
 	env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at asc").Find(&teams)
-	data["teams"] = teams
+	env.Data["teams"] = teams
 
-	return renderFragment(w, data, "dashboard/table.html")
+	return renderFragment(w, env.Data, "dashboard/table.html")
 }

@@ -63,18 +63,19 @@
 </main>
 <div id='map'></div>
 <script>
+    mapboxgl.accessToken = '{{js .MAPBOX_KEY }}';
     coords = [170.5111643, -45.8650509]
-const map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/nathanhollows/cl9l6t1mk000214qm6uwgds3v',
         center: coords,
         zoom: 15,
-});
+    });
 
     {{ range .clues }}
     const popup{{ js .Code }} = new mapboxgl.Popup({ offset: 25 }).setHTML(
         '<p hx-get="/time" hx-trigger="load, every 10s" hx-swap="innerHTML"></p>'
-            );
+    );
     const marker{{ js .Code }} = new mapboxgl.Marker()
     .setLngLat([{{ .Longitude }}, {{ .Latitude }}])
     .addTo(map);

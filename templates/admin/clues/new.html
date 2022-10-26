@@ -47,7 +47,7 @@
         coords = [{{ .clue.Longitude }}, {{ .clue.Latitude }}]
         {{ end }}
         console.log(coords)
-        mapboxgl.accessToken = 'pk.eyJ1IjoibmF0aGFuaG9sbG93cyIsImEiOiJjazIzMzRuNHAwMGVnM2lxaGEwbTNwNGQyIn0.vsjlOi_SpKog-zkBxKW0HQ';
+        mapboxgl.accessToken = '{{ js .MAPBOX_KEY }}';
         var coordinates = document.getElementById('coordinates');
         var map = new mapboxgl.Map({
             container: 'map',

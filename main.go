@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/gorilla/sessions"
+	"github.com/joho/godotenv"
 	"github.com/nathanhollows/AmazingTrace/filesystem"
 	"github.com/nathanhollows/AmazingTrace/game"
 	"github.com/nathanhollows/AmazingTrace/handler"
@@ -24,11 +26,6 @@ var router *chi.Mux
 var env handler.Env
 
 func init() {
-	router = chi.NewRouter()
-	router.Use(middleware.Recoverer)
-	router.Use(middleware.StripSlashes)
-	router.Use(middleware.Compress(5))
-
 	var store = sessions.NewCookieStore([]byte("trace"))
 	store.Options.SameSite = http.SameSiteStrictMode
 
@@ -37,11 +34,20 @@ func init() {
 		panic("failed to connect database")
 	}
 
+	data := make(map[string]interface{})
+
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	data["MAPBOX_KEY"] = os.Getenv("MAPBOX_KEY")
+	fmt.Println("MAPBOX_KEY", data["MAPBOX_KEY"])
+
 	env = handler.Env{
 		Manager: game.Manager{},
 		Session: store,
 		DB:      *db,
-		Data:    make(map[string]interface{}),
+		Data:    data,
 	}
 
 	// Clean up posters
