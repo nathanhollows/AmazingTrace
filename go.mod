@@ -7,6 +7,7 @@ require (
 	github.com/go-chi/chi v1.5.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gorilla/sessions v1.2.1
+	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect
 	github.com/xeonx/timeago v1.0.0-rc5 // indirect
 	github.com/yeqown/go-qrcode v1.5.5 // indirect

@@ -19,6 +19,11 @@ cmd/main
 main
 AmazingTrace
 trace.db
+
+# Assets
 assets/img/icons/*
 assets/img/posters/*
 assets/fonts/*
+
+# Config file
+.env
