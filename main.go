@@ -70,6 +70,11 @@ func main() {
 
 // Set up the routes needed for the game.
 func routes() {
+	router = chi.NewRouter()
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.StripSlashes)
+	router.Use(middleware.Compress(5))
+
 	router.Handle("/", handler.HandlePublic{Env: &env, H: public.Index})
 
 	router.Handle("/start", handler.HandlePublic{Env: &env, H: public.Start})
