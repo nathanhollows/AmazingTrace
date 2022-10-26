@@ -35,6 +35,26 @@ func Set(w http.ResponseWriter, r *http.Request, message Message) {
 	session.Save(r, w)
 }
 
+// Success adds a new success message into the cookie storage.
+func Success(w http.ResponseWriter, r *http.Request, message string) {
+	Set(w, r, Message{Title: "Success", Message: message, Style: "success"})
+}
+
+// Error adds a new error message into the cookie storage.
+func Error(w http.ResponseWriter, r *http.Request, message string) {
+	Set(w, r, Message{Title: "Error", Message: message, Style: "error"})
+}
+
+// Warning adds a new warning message into the cookie storage.
+func Warning(w http.ResponseWriter, r *http.Request, message string) {
+	Set(w, r, Message{Title: "Warning", Message: message, Style: "warning"})
+}
+
+// Info adds a new info message into the cookie storage.
+func Info(w http.ResponseWriter, r *http.Request, message string) {
+	Set(w, r, Message{Title: "Info", Message: message, Style: "info"})
+}
+
 // Get flash messages from the cookie storage.
 func Get(w http.ResponseWriter, r *http.Request) []interface{} {
 	session, err := getCookieStore().Get(r, "flash")
