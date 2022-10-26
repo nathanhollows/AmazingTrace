@@ -51,6 +51,10 @@ func CreateSchedule(env *handler.Env, w http.ResponseWriter, r *http.Request) er
 	// Make sure the schedule doesn't overlap with any other schedules
 	existing := []models.Schedule{}
 	result := env.DB.Find(&existing)
+	if result.Error != nil {
+		data["error"] = result.Error.Error()
+		return renderFragment(w, data, "schedule/table.html")
+	}
 	// Check if there are any overlapping schedules
 	for _, s := range existing {
 		if schedule.Overlaps(s) {
