@@ -28,7 +28,7 @@ func Clues(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	data["title"] = "Clues"
 
 	team := &models.Team{}
-	env.DB.Where("code = ?", teamCode).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", teamCode).Preload("Clues.Clue").Find(&team)
 	data["team"] = team
 
 	var solved int64

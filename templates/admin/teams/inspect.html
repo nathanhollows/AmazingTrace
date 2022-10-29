@@ -4,11 +4,10 @@
         <a href="#close" aria-label="Close" class="close" data-target="modal-example" onClick="toggleModal(event)"></a>
         <h3>{{ .team.Name }}</h3>
     </header>
-    <h4>Overview</h4>
     <div class="grid">
         <p><strong>Code: </strong>{{ .team.Code }}</p>
         <p><strong>Rank: </strong>{{ .team.Code }}</p>
-        <p><strong>Found: </strong>{{ .team.Code }}</p>
+        <p><strong>Found: </strong>{{ len .team.Clues.Found }}</p>
     </div>
     
     <h4>Actions</h4>

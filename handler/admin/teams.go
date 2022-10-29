@@ -70,7 +70,7 @@ func TeamInspect(env *handler.Env, w http.ResponseWriter, r *http.Request) error
 	code := chi.URLParam(r, "code")
 
 	team := models.Team{}
-	env.DB.Model(&team).Where("code = ?", code).Preload("ClueLog.Clue").Preload(clause.Associations).Find(&team)
+	env.DB.Model(&team).Where("code = ?", code).Preload("Clues.Clue").Preload(clause.Associations).Find(&team)
 	data["team"] = team
 
 	return renderFragment(w, data, "teams/inspect.html")
@@ -82,7 +82,7 @@ func FastForward(env *handler.Env, w http.ResponseWriter, r *http.Request) error
 	code := chi.URLParam(r, "code")
 
 	team := &models.Team{}
-	env.DB.Where("code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
 	if team.Code == "" {
 		http.Error(w, "team not found", http.StatusNotFound)
 		return nil
@@ -90,7 +90,7 @@ func FastForward(env *handler.Env, w http.ResponseWriter, r *http.Request) error
 
 	team.FastForward(&env.DB, 1)
 	team = &models.Team{}
-	env.DB.Where("code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
 	data["team"] = team
 
 	return renderFragment(w, data, "teams/scans.html")
@@ -102,14 +102,14 @@ func Shuffle(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	code := chi.URLParam(r, "code")
 
 	team := &models.Team{}
-	env.DB.Where("code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
 	if team.Code == "" {
 		http.Error(w, "team not found", http.StatusNotFound)
 		return nil
 	}
 	team.Shuffle(&env.DB)
 	team = &models.Team{}
-	env.DB.Where("code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
 	data["team"] = team
 
 	return renderFragment(w, data, "teams/scans.html")
@@ -121,14 +121,19 @@ func Rewind(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	code := chi.URLParam(r, "code")
 
 	team := &models.Team{}
-	env.DB.Where("code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
 	if team.Code == "" {
 		http.Error(w, "team not found", http.StatusNotFound)
 		return nil
 	}
 	team.Rewind(&env.DB)
 	team = &models.Team{}
-	env.DB.Where("code = ?", code).Preload("ClueLog.Clue").Find(&team)
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
+	data["team"] = team
+
+	return renderFragment(w, data, "teams/scans.html")
+}
+
 	data["team"] = team
 
 	return renderFragment(w, data, "teams/scans.html")

@@ -16,13 +16,14 @@ import (
 // Team holds the team specific information for a given team
 type Team struct {
 	gorm.Model
-	Code     string    `gorm:"uniqueIndex:idx_code,sort:desc;not null"`
-	Name     string    ``
-	Assigned bool      `gorm:"default:false"`
-	Started  bool      `gorm:"default:false;not null"`
-	ClueLog  []ClueLog `gorm:"foreignKey:Team;references:Code"`
-	Found    int       `gorm:"default:0;not null"`
-	Delayed  bool      `gorm:"default:false"`
+	Code     string `gorm:"uniqueIndex:idx_code,sort:desc;not null"`
+	Name     string ``
+	Assigned bool   `gorm:"default:false"`
+	Started  bool   `gorm:"default:false;not null"`
+	Clues    Clues  `gorm:"foreignKey:Team;references:Code"`
+	Found    int    `gorm:"default:0;not null"`
+	Delayed  bool   `gorm:"default:false"`
+	Points   int    `gorm:"default:0;not null"`
 }
 
 // Get will fetch the team, and hydrate all associated records, given a team code.
@@ -42,14 +43,14 @@ func (t *Team) BeforeCreate(tx *gorm.DB) (err error) {
 
 // AfterFind generates a random string for the team to identify by
 func (t *Team) AfterFind(tx *gorm.DB) (err error) {
-	sort.SliceStable(t.ClueLog, func(i, j int) bool {
-		if t.ClueLog[i].Active != t.ClueLog[j].Active { // If one of the clues is active
-			return t.ClueLog[i].Active
+	sort.SliceStable(t.Clues, func(i, j int) bool {
+		if t.Clues[i].Active != t.Clues[j].Active { // If one of the clues is active
+			return t.Clues[i].Active
 		}
-		if t.ClueLog[i].Found.IsZero() {
-			return t.ClueLog[i].Clue.UpdatedAt.String() < t.ClueLog[j].Clue.UpdatedAt.String()
+		if t.Clues[i].Found.IsZero() {
+			return t.Clues[i].Clue.UpdatedAt.String() < t.Clues[j].Clue.UpdatedAt.String()
 		}
-		return t.ClueLog[i].Found.Before(t.ClueLog[j].Found)
+		return t.Clues[i].Found.Before(t.Clues[j].Found)
 	})
 	return
 }
@@ -66,6 +67,7 @@ func (t *Team) Start(tx *gorm.DB) (err error) {
 			Team:     t.Code,
 			ClueCode: clue.Code,
 			Active:   false,
+			Found:    time.Time{},
 		}
 		tx.Create(&clueLog)
 	}
@@ -134,7 +136,7 @@ func (t *Team) Solve(tx *gorm.DB, log ClueLog) error {
 // UpdateCount will update the found number of the team
 func (t *Team) UpdateCount(tx *gorm.DB) error {
 	var count int64
-	tx.Model(ClueLog{}).Where("team = ? AND found <> ?", t.Code, "0001-01-01 00:00:00+00:00").Count(&count)
+	tx.Model(ClueLog{}).Where("team = ? AND found <> ?", t.Code, time.Time{}).Count(&count)
 	tx.Model(&Team{}).
 		Where("code = ?", t.Code).
 		Update("found", count)
@@ -152,7 +154,7 @@ func (t *Team) CheckClue(tx *gorm.DB, code string) (err error) {
 	}
 
 	// Check if the clue is valid, and solvable
-	for _, log := range t.ClueLog {
+	for _, log := range t.Clues {
 		// If the clue doesn't match then skip it
 		if log.Clue.Code != clue.Code {
 			continue

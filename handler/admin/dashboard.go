@@ -19,7 +19,7 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	env.Data["code_count"] = int(codeCount)
 	if codeCount != 0 {
 		teams := []models.Team{}
-		env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at asc").Find(&teams)
+		env.DB.Where("started == 1").Preload(clause.Associations).Preload("Clues.Clue").Order("found desc, updated_at asc").Find(&teams)
 		env.Data["teams"] = teams
 	}
 
@@ -42,7 +42,7 @@ func Dashboard(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 // DashboardTable renders only the table part of the dashboard
 func DashboardTable(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	teams := []models.Team{}
-	env.DB.Where("started == 1").Preload(clause.Associations).Preload("ClueLog.Clue").Order("found desc, updated_at asc").Find(&teams)
+	env.DB.Where("started == 1").Preload(clause.Associations).Preload("Clues.Clue").Order("found desc, updated_at asc").Find(&teams)
 	env.Data["teams"] = teams
 
 	return renderFragment(w, env.Data, "dashboard/table.html")
