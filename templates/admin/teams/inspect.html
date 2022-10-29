@@ -42,10 +42,10 @@
         <div>
             <strong>Looking for:</strong>
             <ul>
-                {{ range .team.ClueLog }}
-                {{ if .Active }}
-                <li>{{ .Clue.Location }}</li>
-                {{ end }}
+                {{ range .team.Clues.Active }}
+                <li>{{ .Clue.Location }}
+                    <a hx-get="/admin/teams/solve/{{ .Team }}/{{ .ClueCode }}" hx-target="#modal-scans" hx-swap="outerHTML">(Solve)</a>
+                </li>
                 {{ end }}
             </ul>
         </div>
@@ -53,21 +53,13 @@
         <div>
             <strong>Found:</strong>
             <ul>
-                {{ range .team.ClueLog }}
-                    {{ if not .Active }}
-                        {{ if not .Found.IsZero }}
-                        <li>{{ .Clue.Location }}, {{ .Found.Format "3:04 pm"}}</li>
-                        {{ end }}
-                    {{ end }}
+                {{ range .team.Clues.Found }}
+                <li>{{ .Clue.Location }}, {{ .Found.Format "3:04 pm"}}
+                    <a hx-get="/admin/teams/unsolve/{{ .Team }}/{{ .ClueCode }}" hx-target="#modal-scans" hx-swap="outerHTML">(Undo)</a>
+                </li>
                 {{ end }}
             </ul>
         </div>
     </div>
-    
-    <footer>
-        <a href="#cancel" role="button"class="secondary" data-target="modal" onClick="toggleModal(event)">
-            Close
-        </a>
-    </footer>
 </article>
 {{ end }}

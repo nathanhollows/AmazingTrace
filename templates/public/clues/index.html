@@ -13,24 +13,20 @@
     {{ template "flash" . }}
 
     <p style="text-align: center;">
-        <strong>{{ .solved }} / {{ len .team.ClueLog }} clues solved</strong>
+        <strong>{{ len .team.Clues.Found }} / {{ len .team.Clues }} clues solved</strong>
     </p>
 
     <strong>Unsolved Clues</strong>
     <ul class="mt-3 mb-5">
-        {{ range .team.ClueLog }}
-        {{ if .Active }}
+        {{ range .team.Clues.Active }}
         <li class="mt-2">{{ .Clue.Clue }}</li>
-        {{ end }}
         {{ end }}
     </ul>
     
     <strong>Solved Clues</strong>
     <ul>
-        {{ range .team.ClueLog }}
-        {{ if not .Found.IsZero }}
+        {{ range .team.Clues.Found }}
         <li class="mt-2">{{ .Clue.Location }}</li>
-        {{ end }}
         {{ end }}
     </ul>
     

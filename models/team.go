@@ -236,3 +236,27 @@ func (t *Team) Shuffle(tx *gorm.DB) error {
 	t.UpdateCount(tx)
 	return nil
 }
+
+
+// MarkAsFound will mark a specific clue as found for a team
+func (t *Team) MarkAsFound(db *gorm.DB, code string) error {
+	db.Model(&ClueLog{}).
+		Where("clue_code = ? and team = ?", code, t.Code).
+		Updates(map[string]interface{}{"found": time.Now(), "active": false}).
+		Omit("Clue")
+	t.UpdateCount(db)
+	t.ActivateClues(db, 3)
+	return nil
+}
+
+// MarkAsUnfound will remove the found time from a clue for a team
+func (t *Team) MarkAsUnfound(db *gorm.DB, code string) error {
+	// Update the clue with zero time
+	db.Model(&ClueLog{}).
+		Where("clue_code = ? and team = ?", code, t.Code).
+		Updates(map[string]interface{}{"found": time.Time{}}).
+		Omit("Clue")
+	t.UpdateCount(db)
+	t.ActivateClues(db, 3)
+	return nil
+}

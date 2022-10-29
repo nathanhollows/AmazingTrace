@@ -95,6 +95,9 @@ func routes() {
 	router.Handle("/admin/teams/fastforward/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.FastForward})
 	router.Handle("/admin/teams/shuffle/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.Shuffle})
 	router.Handle("/admin/teams/rewind/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.Rewind})
+	router.Handle("/admin/teams/solve/{team:[A-z]{4}}/{clue:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.MarkAsFound})
+	router.Handle("/admin/teams/unsolve/{team:[A-z]{4}}/{clue:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.MarkAsUnfound})
+
 	// Clues
 	router.Handle("/admin/clues", handler.HandleAdmin{Env: &env, H: admin.Clues})
 	router.Handle("/admin/clues/{code:[A-z]{4}}", handler.HandleAdmin{Env: &env, H: admin.ChangeClues})

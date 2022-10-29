@@ -134,6 +134,41 @@ func Rewind(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
 	return renderFragment(w, data, "teams/scans.html")
 }
 
+// Given a clue code, mark it as solved for a team.
+func MarkAsFound(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	code := chi.URLParam(r, "team")
+	clueCode := chi.URLParam(r, "clue")
+
+	team := &models.Team{}
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
+	if team.Code == "" {
+		http.Error(w, "team not found", http.StatusNotFound)
+		return nil
+	}
+	team.MarkAsFound(&env.DB, clueCode)
+	team = &models.Team{}
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
+	data["team"] = team
+
+	return renderFragment(w, data, "teams/scans.html")
+}
+
+// Given a clue code, mark it as unsolved for a team.
+func MarkAsUnfound(env *handler.Env, w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	code := chi.URLParam(r, "team")
+	clueCode := chi.URLParam(r, "clue")
+
+	team := &models.Team{}
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
+	if team.Code == "" {
+		http.Error(w, "team not found", http.StatusNotFound)
+		return nil
+	}
+	team.MarkAsUnfound(&env.DB, clueCode)
+	team = &models.Team{}
+	env.DB.Where("code = ?", code).Preload("Clues.Clue").Find(&team)
 	data["team"] = team
 
 	return renderFragment(w, data, "teams/scans.html")
