@@ -41,7 +41,6 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	data["MAPBOX_KEY"] = os.Getenv("MAPBOX_KEY")
-	fmt.Println("MAPBOX_KEY", data["MAPBOX_KEY"])
 
 	env = handler.Env{
 		Manager: game.Manager{},
