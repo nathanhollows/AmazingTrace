@@ -42,7 +42,7 @@ func Success(w http.ResponseWriter, r *http.Request, message string) {
 
 // Error adds a new error message into the cookie storage.
 func Error(w http.ResponseWriter, r *http.Request, message string) {
-	Set(w, r, Message{Title: "Error", Message: message, Style: "error"})
+	Set(w, r, Message{Message: message, Style: "danger"})
 }
 
 // Warning adds a new warning message into the cookie storage.
