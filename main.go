@@ -49,12 +49,19 @@ func init() {
 		Data:    data,
 	}
 
+	// Set up Admin user
+	_, err = models.CreateAdmin(env.DB, os.Getenv("ADMIN_USERNAME"), os.Getenv("ADMIN_PASSWORD"))
+	if err != nil {
+		panic(err)
+	}
+
 	// Clean up posters
 	go models.CleanUpPosters(db)
 }
 
 func main() {
 	env.DB.AutoMigrate(
+		&models.Admin{},
 		&models.Area{},
 		&models.Clue{},
 		&models.ClueLog{},
@@ -83,7 +90,7 @@ func routes() {
 	router.Handle("/{code:[A-z]{4}}", handler.HandlePublic{Env: &env, H: public.Scan})
 
 	router.Handle("/login", handler.HandlePublic{Env: &env, H: public.Login})
-	router.Handle("/register", handler.HandlePublic{Env: &env, H: public.Register})
+	// router.Handle("/register", handler.HandlePublic{Env: &env, H: public.Register})
 	// Dashboard
 	router.Handle("/admin", handler.HandleAdmin{Env: &env, H: admin.Dashboard})
 	router.Handle("/admin/dashboard", handler.HandleAdmin{Env: &env, H: admin.Dashboard})

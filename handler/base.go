@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/nathanhollows/AmazingTrace/game"
+	"github.com/nathanhollows/AmazingTrace/helpers"
 	"gorm.io/gorm"
 )
 
@@ -71,6 +72,10 @@ func (h HandlePublic) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h HandleAdmin) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	session, err := h.Env.Session.Get(r, "admin")
+	if err != nil || session.Values["id"] == nil {
+		http.Redirect(w, r, helpers.URL("login"), http.StatusFound)
+	}
 	err := h.H(h.Env, w, r)
 	if err != nil {
 		switch e := err.(type) {
