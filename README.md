@@ -12,15 +12,16 @@ I created this game as part of a Master of Science Communition project investiga
 
 Participants are given a team code, which are randomly generated when the game is launched. The team code is written on a card and given out. The card contains the minimum set of instructions to enable players to engage.
 
-Image placeholder
+<img src="https://github.com/nathanhollows/AmazingTrace/assets/13064427/027b7cd6-bb40-4bd3-99f6-3b70a533fcda" width=400>
 
 The server asks for the team code which it then stores and remembers.
 
-Image placeholder
+<img src="https://github.com/nathanhollows/AmazingTrace/assets/13064427/7e01593a-0735-4836-a2e3-09ef65f22c98" width=400>
+
 
 These posters are placed around the area of play.
 
-Image placeholder
+<img src="https://github.com/nathanhollows/AmazingTrace/assets/13064427/acd66577-84b3-4ba7-9c57-42df246c51ac" width=400>
 
 The game runs to a schedule, meaning all players can start and end at the same time. The game tells players how much time is left, and then instructs players to return to base before time runs out.
 
