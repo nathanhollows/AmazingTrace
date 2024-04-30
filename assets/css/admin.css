@@ -1,0 +1,105 @@
+/** Variables **/
+
+:root:not([data-theme="light"]) {
+    
+}
+
+/** Typography **/
+
+h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase;
+}
+
+#modal h3 {
+    margin: auto;
+    text-align: left;
+}
+
+hr {
+    height: 3px !important;
+    background: var(--primary);
+}
+
+button svg {
+    width: auto;
+    margin-top: -0.2em;
+    height: 1em;
+}
+
+/** Tables **/
+
+form.actions {
+    padding: unset;
+    margin: unset;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+tr.htmx-swapping td {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+tr button {
+    margin: auto;
+    margin-top: auto;
+    height: calc(1rem * var(--line-height) + var(--form-element-spacing-vertical) * 2 + var(--border-width) * 2);
+}
+
+/** Layout **/
+
+.flex {
+    display: flex;
+    row-gap: var(--spacing);
+    column-gap: var(--spacing);
+}
+
+#codes.grid {
+    grid-template-columns: repeat(auto-fit, minmax(8ch, 1fr));
+    font-weight: bold;
+    text-align: center;
+    row-gap: 1em;
+}
+
+.alert {
+    padding: var(--spacing);
+    border: 1px solid var(--primary);
+    margin: var(--block-spacing-vertical) 0;
+    background: var(--code-background-color);
+}
+
+dialog article {
+    width: 100%;
+}
+
+.modal-is-open {
+    overflow: scroll;
+}
+
+/** Header, Main, Footer **/
+
+body > footer, body > header, body > main {
+    padding: calc(var(--spacing) * 2) 0;
+}
+
+header, footer {
+    border-bottom: 3px solid var(--primary);
+    border-top: 3px solid var(--primary);
+    margin: var(--spacing) auto;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: unset;
+}
+
+/** Forms **/
+
+input#code {
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.5em;
+}

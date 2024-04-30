@@ -1,0 +1,104 @@
+
+{{ define "body" }}
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css' rel='stylesheet' />
+
+<main class="container">
+    {{ if .clue.Location }}
+    <h1>Editing {{ .clue.Location }}</h1>
+    {{ else }}
+    <h1>Add a new clue</h1>
+    {{ end }}
+    {{ template "flash" . }}
+    
+    <form method="post">
+
+        <input type="hidden" name="latitude" value="{{ .clue.Latitude }}">
+        <input type="hidden" name="longitude" value="{{ .clue.Longitude }}">
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{ .clue.Location }}">
+
+            <label for="points">Points</label>
+            <input type="number" class="form-control" id="points" name="points" placeholder="Points" value="{{ .clue.Points }}">
+            <small>The number of points the team will get for solving this clue</small>
+
+            <label for="clues">Clues</label>
+            <textarea class="form-control" id="clues" name="clues" placeholder="Clues">{{ .clue.Clue }}</textarea>
+            <small>Separate each clue with a new line</small>
+
+            <button>Submit</button>
+        </div>
+
+    </form>
+
+    <aside>
+        <label for="switch">
+            <input type="checkbox" id="switch" name="switch" role="switch" {{ if .clue.Longitude }}checked{{ end }}>
+            Save the map location
+        </label>
+        <div id='map' style='width: 400px; height: 500px;'></div>
+    </aside>
+    <script>
+        coords = [170.5111643, -45.8650509]
+        {{ if .clue.Longitude }}
+        coords = [{{ .clue.Longitude }}, {{ .clue.Latitude }}]
+        {{ end }}
+        console.log(coords)
+        mapboxgl.accessToken = '{{ js .MAPBOX_KEY }}';
+        var coordinates = document.getElementById('coordinates');
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: coords,
+            zoom: 14
+        });
+        
+        var marker = new mapboxgl.Marker({
+        })
+        .setLngLat(coords)
+        .addTo(map);
+        
+        map.on('drag', function() {
+            centro=map.getCenter();
+            marker.setLngLat(centro);
+            // Set the latitude and longitude fields
+            document.querySelector('input[name="latitude"]').value = centro.lat;
+            document.querySelector('input[name="longitude"]').value = centro.lng;
+            // Set the switch to true
+            document.querySelector('input[name="switch"]').checked = true;
+        });
+        map.on('zoom', function() {
+            centro=map.getCenter();
+            marker.setLngLat(centro);
+        });
+        // If the switch is checked, save the map location else don't
+        document.querySelector('input[name="switch"]').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                centro=map.getCenter();
+                marker.setLngLat(centro);
+                // Set the latitude and longitude fields
+                document.querySelector('input[name="latitude"]').value = centro.lat;
+                document.querySelector('input[name="longitude"]').value = centro.lng;
+            } else {
+                document.querySelector('input[name="latitude"]').value = "";
+                document.querySelector('input[name="longitude"]').value = "";
+            }
+        });
+    </script>
+    
+    <style>
+        .aside {
+            width: 400px;
+            float: left;
+        }
+        form {
+            width: calc(100% - 400px);
+            float: right;
+            padding: 0 2em;
+        }
+    </style>
+</main>
+{{ end }}

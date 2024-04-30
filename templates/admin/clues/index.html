@@ -1,0 +1,57 @@
+{{ define "body" }}
+<main class="container">
+    <h1>Clues
+        <a href="/admin/clues/new" role="button" class="contrast float-right">New</a>
+    </h1>
+    {{ template "flash" . }}
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Marker</th>
+                <th scope="col">Points</th>
+                <th scope="col">Location</th>
+                <th scope="col">Poster</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody hx-confirm="Are you sure?" hx-target="closest tr" hx-swap="outerHTML">
+            {{ if not .clues }}
+            <tr>
+                <td colspan="6" style="text-align:center; padding: 1em;">No clues to show. Why not <a href="/admin/clues/new">add a clue?</a></td>
+            </tr>
+            {{ end }}
+            {{ range .clues}}
+            <tr>
+                {{ if .Latitude }}
+                <td>{{ icon "map-pin" }}</td>
+                {{ else }}
+                <td><small>{{ icon "x" }}</small></td>
+                {{ end }}
+                <td>{{ .Points }}</td>
+                <td><a href="/admin/clues/edit/{{ .Code }}">{{ .Location }}</a></td>
+                <td>                   
+                    <a href="/static/img/posters/{{.Code}}.png">Get Poster</a>
+                </td>
+                <td>
+                    <a name="code" value="{{.Code}}" hx-delete="/admin/clues/{{.Code}}">Delete</a>
+                </td>
+            </tr>
+            {{ end }}
+        </tbody>
+        <tfoot>
+            <th scope="col">Marker</th>
+            <th scope="col">Points</th>
+            <th scope="col">Location</th>
+            <th scope="col">Poster</th>
+            <th scope="col">Delete</th>
+        </tfoot>
+    </table>
+    
+</main>
+<style>
+    .float-right {
+        float: right;
+    }
+</style>
+{{ end }}

@@ -1,0 +1,23 @@
+{{ define "fragment" }}
+    {{ range .schedule }}
+        <tr>
+            <td>{{ .Date.Format "Mon, 02 Jan 2006" }}</td>
+            <td>{{ .Start.Format "3:04 pm" }}</td>
+            <td>{{ .End.Format "3:04 pm" }}</td>
+            <td>{{ (.End.Sub .Start).Minutes }} minutes</td>
+            <td><a name="code" hx-delete="/admin/schedule/{{.ID}}" hx-target="closest tr" hx-confirm="Are you sure?">Delete</a></td>
+        </tr>
+    {{ end }}
+    {{ if .error }}
+        <tr>
+            <td colspan="5" style="text-align: center;">{{ .error }}</td>
+        </tr>
+    {{ end }}
+    {{ if eq (len .schedule) 0 }}
+    <tr>
+        <td colspan="5">
+            There are no scheduled games yet
+        </td>
+    </tr>
+    {{ end }}
+{{ end }}

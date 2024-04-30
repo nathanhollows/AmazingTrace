@@ -1,0 +1,36 @@
+{{ define "base" }}
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <title>{{.title}}</title>
+</head>
+
+<body class="container">
+    <header>
+        <nav>
+            <ul>
+                <li><strong>The Amazing Trace</strong></li>
+            </ul>
+            <ul>
+                <li><a href="/admin">Leaderboard</a></li>
+                <li><a href="/admin/teams">Team Codes</a></li>
+                <li><a href="/admin/clues">Clues</a></li>
+                <li><a href="/admin/schedule">Schedule</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    {{ template "body" .}}
+
+    <script src="https://unpkg.com/htmx.org@1.6.1" integrity="sha384-tvG/2mnCFmGQzYC1Oh3qxQ7CkQ9kMzYjWZSNtrRZygHPDDqottzEJsqS4oUVodhW" crossorigin="anonymous"></script>
+</body>
+
+</html>
+{{ end }}

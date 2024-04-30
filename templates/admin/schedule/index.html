@@ -1,0 +1,40 @@
+{{ define "body" }}
+<main class="container">
+    <h1>Schedule</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Start time</th>
+                <th>End time</th>
+                <th>Duration</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody id="table-body" hx-get="/admin/schedule/table" hx-trigger="load" hx-swap="innerHTML">
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5">
+                <form id="form" class="grid" hx-post="/admin/schedule/create" hx-target="#table-body" hx-swap="innerHTML">
+                    <label for="location">
+                        Date
+                        <input type="date" id="date" name="date" value="{{ date.Format "2006-01-02"}}" required>
+                    </label>
+                    <label for="start">
+                        Start time
+                        <input type="time" id="start" name="start" value="11:00" required>
+                    </label>
+                    <label for="end">
+                        End time
+                        <input type="time" id="end" name="end" value="13:00" required>
+                    </label>
+                    
+                    <button>Add</button>
+                </form>
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</main>
+{{ end }}

@@ -1,0 +1,181 @@
+{{ define "body" }}
+<style>
+    .container {
+        max-width: revert;
+    }
+
+    main {
+        max-width: 400px;
+        float: left;
+        width: 400px;
+        background: var(--background-color);
+        height: 100vh;
+        overflow: scroll;
+    }
+
+    #map {
+        width: calc(100vw - 400px);
+        height: 100vh;
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    header {
+        display: none;
+    }
+</style>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css' rel='stylesheet' />
+<main class="container-fluid">
+    <h1>Leaderboard</h1>
+    <p hx-get="/time" hx-trigger="load, every 10s, htmx:afterSwap from:#modal" hx-swap="innerHTML"></p>  
+    {{ template "flash" . }}
+    {{ if eq .clue_count 0 }}
+    <div class="alert">
+        There are not clues yet. Do you want to <a href="/admin/clues">add clues</a>?
+    </div>
+    {{ end }}
+    {{ if eq .code_count 0 }}
+    <div class="alert">
+        There are no teams yet. Do you want to <a href="/admin/teams">generate team codes</a>?
+    </div>
+    {{ else }}
+    
+    <table>
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">Found</th>
+            </tr>
+        </thead>
+        <tbody hx-get="/admin/dashboard/table" hx-trigger="load, every 10s, htmx:afterSwap from:#modal" hx-swap="innerHTML">
+            
+        </tbody>
+    </table>
+    
+    <!-- Modal -->
+    <dialog id="modal">
+    </dialog>
+    {{ end }}
+</main>
+<div id='map'></div>
+<script>
+    mapboxgl.accessToken = '{{js .MAPBOX_KEY }}';
+    coords = [170.5111643, -45.8650509]
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/nathanhollows/cl9l6t1mk000214qm6uwgds3v',
+        center: coords,
+        zoom: 15,
+    });
+
+    {{ range .clues }}
+    const popup{{ js .Code }} = new mapboxgl.Popup({ offset: 25 }).setHTML(
+        '<p hx-get="/time" hx-trigger="load, every 10s" hx-swap="innerHTML"></p>'
+    );
+    const marker{{ js .Code }} = new mapboxgl.Marker()
+    .setLngLat([{{ .Longitude }}, {{ .Latitude }}])
+    .addTo(map);
+    {{ end }}
+</script>
+<script>
+    /*
+    * Modal
+    *
+    * Pico.css - https://picocss.com
+    * Copyright 2019-2021 - Licensed under MIT
+    */
+    
+    // Config
+    const isOpenClass = 'modal-is-open';
+    const openingClass = 'modal-is-opening';
+    const closingClass = 'modal-is-closing';
+    const animationDuration = 400; // ms
+    let visibleModal = null;
+    
+    
+    // Toggle modal
+    const toggleModal = event => {
+        event.preventDefault();
+        const modal = document.getElementById(event.target.getAttribute('data-target'));
+        (typeof(modal) != 'undefined' && modal != null)
+        && isModalOpen(modal) ? closeModal(modal) : openModal(modal)
+    }
+    
+    // Is modal open
+    const isModalOpen = modal => {
+        return modal.hasAttribute('open') && modal.getAttribute('open') != 'false' ? true : false;
+    }
+    
+    // Open modal
+    const openModal = modal => {
+        if (isScrollbarVisible()) {
+            document.documentElement.style.setProperty('--scrollbar-width', `${getScrollbarWidth()}px`);
+        }
+        document.documentElement.classList.add(isOpenClass, openingClass);
+        setTimeout(() => {
+            visibleModal = modal;
+            document.documentElement.classList.remove(openingClass);
+        }, animationDuration);
+        modal.setAttribute('open', true);
+    }
+    
+    // Close modal
+    const closeModal = modal => {
+        visibleModal = null;
+        document.documentElement.classList.add(closingClass);
+        setTimeout(() => {
+            document.documentElement.classList.remove(closingClass, isOpenClass);
+            document.documentElement.style.removeProperty('--scrollbar-width');
+            modal.removeAttribute('open');
+        }, animationDuration);
+    }
+    
+    // Close with a click outside
+    document.addEventListener('click', event => {
+        if (visibleModal != null) {
+            const modalContent = visibleModal.querySelector('article');
+            const isClickInside = modalContent.contains(event.target);
+            !isClickInside && closeModal(visibleModal);
+        }
+    });
+    
+    // Close with Esc key
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && visibleModal != null) {
+            closeModal(visibleModal);
+        }
+    });
+    
+    // Get scrollbar width
+    const getScrollbarWidth = () => {
+        
+        // Creating invisible container
+        const outer = document.createElement('div');
+        outer.style.visibility = 'hidden';
+        outer.style.overflow = 'scroll'; // forcing scrollbar to appear
+        outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+        document.body.appendChild(outer);
+        
+        // Creating inner element and placing it in the container
+        const inner = document.createElement('div');
+        outer.appendChild(inner);
+        
+        // Calculating difference between container's full width and the child width
+        const scrollbarWidth = (outer.offsetWidth - inner.offsetWidth);
+        
+        // Removing temporary elements from the DOM
+        outer.parentNode.removeChild(outer);
+        
+        return scrollbarWidth;
+    }
+    
+    // Is scrollbar visible
+    const isScrollbarVisible = () => {
+        return document.body.scrollHeight > screen.height;
+    }
+</script>
+{{ end }}

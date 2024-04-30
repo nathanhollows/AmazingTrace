@@ -1,0 +1,9 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Hollows
+    given-names: Nathan
+    orcid: https://orcid.org/0000-0002-1825-5410
+title: "The Amazing Trace"
+version: 1.0.0
+date-released: 2024-04-30

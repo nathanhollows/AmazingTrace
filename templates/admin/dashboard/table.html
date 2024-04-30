@@ -1,0 +1,21 @@
+{{ define "fragment" }}
+{{ if eq (len .teams) 0 }}
+<tr>
+    <th colspan="5" style="text-align: center; padding: 2em;">Teams will appear here when they first check in.</th>
+</tr>
+{{end }}
+{{ range $i, $team := .teams }}
+<tr>
+    <th scope="row">{{ add $i 1 }}</th>
+    <td>
+        <a data-target="modal" onClick="toggleModal(event)"
+            hx-get="/admin/teams/inspect/{{ $team.Code }}" hx-target="#modal" hx-swap="innerHTML" href="#">
+            {{ $team.Name }}
+        </a>
+    </td>
+    <td>
+        <progress value="{{ $team.Found }}" max="{{ len $team.Clues }}"></progress>
+    </td>
+</tr>
+{{ end }}
+{{ end }}
